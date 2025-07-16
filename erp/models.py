@@ -46,3 +46,14 @@ class Attendance(models.Model):
     period = models.IntegerField()
     status = models.CharField(max_length=1, choices=[('P', 'Present'), ('A', 'Absent')])
 
+class FacultyProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    department = models.CharField(max_length=100)
+
+class Leave(models.Model):
+    faculty = models.ForeignKey(User, on_delete=models.CASCADE)
+    from_date = models.DateField()
+    to_date = models.DateField()
+    reason = models.TextField()
+    status = models.CharField(max_length=10, default='Pending')
+

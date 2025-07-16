@@ -28,4 +28,6 @@ def attendance_view(request):
     if form.is_valid():
         form.save()
     return render(request, 'erp/attendance/mark.html', {'form': form})
-
+@login_required
+def faculty_dashboard(request):
+    return render(request, 'erp/faculty/dashboard.html')
