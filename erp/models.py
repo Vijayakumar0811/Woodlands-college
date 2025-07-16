@@ -17,3 +17,32 @@ class Notice(models.Model):
     description = models.TextField()
     date_posted = models.DateField(auto_now_add=True)
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Course(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=10)
+
+class Subject(models.Model):
+    name = models.CharField(max_length=100)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    subject_code = models.CharField(max_length=10)
+
+class FacultySubject(models.Model):
+    faculty = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role__name': 'Faculty'})
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    class_section = models.ForeignKey(ClassSection, on_delete=models.CASCADE)
+
+class Timetable(models.Model):
+    day = models.CharField(max_length=10)
+    period = models.IntegerField()
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    class_section = models.ForeignKey(ClassSection, on_delete=models.CASCADE)
+    faculty = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role__name': 'Faculty'})
+
+class Attendance(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    date = models.DateField()
+    period = models.IntegerField()
+    status = models.CharField(max_length=1, choices=[('P', 'Present'), ('A', 'Absent')])
+

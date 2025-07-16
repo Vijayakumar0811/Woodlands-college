@@ -22,3 +22,10 @@ def logout_view(request):
 def notice_list(request):
     notices = Notice.objects.all()
     return render(request, 'erp/notices/list.html', {'notices': notices})
+
+def attendance_view(request):
+    form = AttendanceForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+    return render(request, 'erp/attendance/mark.html', {'form': form})
+
