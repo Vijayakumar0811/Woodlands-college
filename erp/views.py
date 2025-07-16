@@ -32,6 +32,22 @@ def attendance_view(request):
 def faculty_dashboard(request):
     return render(request, 'erp/faculty/dashboard.html')
 
+from django.contrib.auth.decorators import login_required
+@login_required
+def student_dashboard(request):
+    return render(request, 'erp/students/dashboard.html')
+
+def student_list(request):
+    students = Student.objects.all()
+    return render(request, 'erp/students/list.html', {'students': students})
+
+def add_student(request):
+    form = StudentForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('student_list')
+    return render(request, 'erp/students/add.html', {'form': form})
+
 
 def fee_payment_view(request):
     return render(request, 'erp/fees/payment.html')
