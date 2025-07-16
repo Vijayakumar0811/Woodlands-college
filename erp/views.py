@@ -31,3 +31,10 @@ def attendance_view(request):
 @login_required
 def faculty_dashboard(request):
     return render(request, 'erp/faculty/dashboard.html')
+
+
+def fee_payment_view(request):
+    return render(request, 'erp/fees/payment.html')
+
+def exam_view(request):
+    return render(request, 'erp/exams/index.html')

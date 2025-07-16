@@ -57,3 +57,24 @@ class Leave(models.Model):
     reason = models.TextField()
     status = models.CharField(max_length=10, default='Pending')
 
+class FeeStructure(models.Model):
+    class_section = models.ForeignKey(ClassSection, on_delete=models.CASCADE)
+    total_fee = models.DecimalField(max_digits=8, decimal_places=2)
+
+class FeePayment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    date = models.DateField(auto_now_add=True)
+    receipt_no = models.CharField(max_length=50)
+
+class Exam(models.Model):
+    name = models.CharField(max_length=50)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+class Mark(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
+    marks_obtained = models.FloatField()
+    grade = models.CharField(max_length=5)
