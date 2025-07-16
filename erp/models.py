@@ -78,3 +78,31 @@ class Mark(models.Model):
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
     marks_obtained = models.FloatField()
     grade = models.CharField(max_length=5)
+
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    isbn = models.CharField(max_length=13)
+    available = models.BooleanField(default=True)
+
+class BookIssue(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    issue_date = models.DateField()
+    return_date = models.DateField(null=True, blank=True)
+
+
+class Vehicle(models.Model):
+    route = models.CharField(max_length=50)
+    driver = models.CharField(max_length=100)
+
+class TransportAssignment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+
+class HostelRoom(models.Model):
+    room_number = models.CharField(max_length=10)
+    capacity = models.IntegerField()
+
+class HostelAssignment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    room = models.ForeignKey(HostelRoom, on_delete=models.CASCADE)
