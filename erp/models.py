@@ -106,3 +106,18 @@ class HostelRoom(models.Model):
 class HostelAssignment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     room = models.ForeignKey(HostelRoom, on_delete=models.CASCADE)
+
+class ClassSection(models.Model):
+    name = models.CharField(max_length=20)
+    year = models.IntegerField()
+    def str(self): return f"{self.name} - Year {self.year}"
+
+class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    admission_no = models.CharField(max_length=20)
+    dob = models.DateField()
+    class_section = models.ForeignKey(ClassSection, on_delete=models.SET_NULL, null=True)
+
+class Parent(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
