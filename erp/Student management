@@ -1,0 +1,46 @@
+ #code
+```
+class ClassSection(models.Model):
+    name = models.CharField(max_length=20)
+    year = models.IntegerField()
+    def str(self): return f"{self.name} - Year {self.year}"
+
+class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    admission_no = models.CharField(max_length=20)
+    dob = models.DateField()
+    class_section = models.ForeignKey(ClassSection, on_delete=models.SET_NULL, null=True)
+
+class Parent(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
+
+# forms.py 
+```
+from django import forms
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['user', 'admission_no', 'dob', 'class_section']
+```
+# views.py 
+```
+from django.contrib.auth.decorators import login_required
+@login_required
+def student_dashboard(request):
+    return render(request, 'erp/students/dashboard.html')
+
+def student_list(request):
+    students = Student.objects.all()
+    return render(request, 'erp/students/list.html', {'students': students})
+
+def add_student(request):
+    form = StudentForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('student_list')
+    return render(request, 'erp/students/add.html', {'form': form})
+```
+
+
+
