@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Enter Marks - {{ exam.name }}</h3>
+    <form method="POST">{% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    {% for subject in subjects %}
+                    <th>{{ subject.name }}<br>Mark / Total</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.user.get_full_name }}</td>
+                    {% for subject in subjects %}
+                    <td>
+                        <input type="text" name="mark_{{ student.id }}_{{ subject.id }}" placeholder="Mark" size="4" required>
+                        /
+                        <input type="text" name="total_{{ student.id }}_{{ subject.id }}" placeholder="Total" size="4" required>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button class="btn btn-primary">Save Marks</button>
+    </form>
+</div>
+{% endblock %}

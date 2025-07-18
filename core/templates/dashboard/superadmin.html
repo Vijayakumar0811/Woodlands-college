@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Welcome, Super Admin!</h2>
+
+<div class="row mt-4">
+  <!-- Stats Summary -->
+  <div class="col-md-3">
+    <div class="card bg-primary text-white">
+      <div class="card-body">
+        <h5>Total Students</h5>
+        <p class="fs-4">{{ student_count }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card bg-success text-white">
+      <div class="card-body">
+        <h5>Total Faculty</h5>
+        <p class="fs-4">{{ faculty_count }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card bg-warning text-dark">
+      <div class="card-body">
+        <h5>Fees Collected</h5>
+        <p class="fs-4">₹ {{ fee_collected }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card bg-info text-white">
+      <div class="card-body">
+        <h5>Total Books</h5>
+        <p class="fs-4">{{ books }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="my-4">
+
+<!-- Full Control Panels -->
+<div class="row">
+  <!-- Student Control -->
+  <div class="col-md-6 mb-4">
+    <div class="card border-secondary">
+      <div class="card-header bg-secondary text-white">👨‍🎓 Student Management</div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <li><a href="{% url 'student_list' %}">🔍 View All Students</a></li>
+          <li><a href="{% url 'student_add' %}">➕ Add New Student</a></li>
+          <li><a href="{% url 'attendance_report' %}">📋 Attendance Report</a></li>
+          <li><a href="{% url 'view_result' student_id=1 %}">📊 View Sample Result</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faculty Control -->
+  <div class="col-md-6 mb-4">
+    <div class="card border-dark">
+      <div class="card-header bg-dark text-white">👩‍🏫 Faculty Management</div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <li><a href="{% url 'faculty_list' %}">🔍 View Faculty</a></li>
+          <li><a href="{% url 'faculty_add' %}">➕ Add Faculty</a></li>
+          <li><a href="{% url 'faculty_leave_list' %}">📝 Leave Requests</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fee Control -->
+  <div class="col-md-6 mb-4">
+    <div class="card border-success">
+      <div class="card-header bg-success text-white">💰 Fee Management</div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <li><a href="{% url 'fee_structure_list' %}">📂 View Fee Structure</a></li>
+          <li><a href="{% url 'fee_payment_list' %}">💳 View Payments</a></li>
+          <li><a href="{% url 'fee_payment_add' %}">➕ Add Payment</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Library Control -->
+  <div class="col-md-6 mb-4">
+    <div class="card border-info">
+      <div class="card-header bg-info text-white">📚 Library</div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <li><a href="{% url 'book_list' %}">📖 View Books</a></li>
+          <li><a href="{% url 'book_add' %}">➕ Add Book</a></li>
+          <li><a href="{% url 'issue_list' %}">📦 Issued Books</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transport Control -->
+  <div class="col-md-6 mb-4">
+    <div class="card border-warning">
+      <div class="card-header bg-warning text-dark">🚌 Transport</div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <li><a href="{% url 'vehicle_list' %}">🚐 Vehicles</a></li>
+          <li><a href="{% url 'vehicle_add' %}">➕ Add Vehicle</a></li>
+          <li><a href="{% url 'assign_transport' %}">📍 Assign Transport</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hostel Control -->
+  <div class="col-md-6 mb-4">
+    <div class="card border-danger">
+      <div class="card-header bg-danger text-white">🏠 Hostel</div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <li><a href="{% url 'hostel_list' %}">🏘️ Hostel List</a></li>
+          <li><a href="{% url 'room_list' %}">🛏️ Rooms</a></li>
+          <li><a href="{% url 'allocate_hostel' %}">➕ Allocate Hostel</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

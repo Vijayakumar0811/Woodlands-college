@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Welcome, {{ request.user.get_full_name }} (Student)</h2>
+
+    <!-- Student Photo and Info -->
+    <div class="col-md-3">
+        <div class="card mb-3">
+            {% if student.photo %}
+                <img src="{{ student.photo.url }}" class="card-img-top img-fluid" alt="Student Photo">
+            {% else %}
+                <img src="{% static 'images/default_student.png' %}" class="card-img-top img-fluid" alt="No Photo">
+            {% endif %}
+            <div class="card-body text-center">
+                <strong>{{ student.get_full_name }}</strong><br>
+                <small>{{ student.register_no }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row mt-3">
+
+        <!-- Timetable -->
+        <div class="col-md-3">
+            <div class="card bg-success text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">My Timetable</h5>
+                    <p>Check class schedule and timings.</p>
+                    <a href="{% url 'student_timetable' %}" class="text-white">View Timetable</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance -->
+        <div class="col-md-3">
+            <div class="card bg-info text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance</h5>
+                    <p>Total: {{ total_classes }} | Present: {{ present_days }}</p>
+                    <p><strong>{{ attendance_percent }}%</strong> Present</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fee -->
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Fee Status</h5>
+                    <p>Due: ₹{{ total_due }}</p>
+                    <p>Paid: ₹{{ total_paid }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marks -->
+        <div class="col-md-3">
+            <div class="card bg-primary text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">My Marks</h5>
+                    {% for mark in marks %}
+                        <p>{{ mark.subject.name }}: {{ mark.marks_obtained }}/{{ mark.total_marks }}</p>
+                    {% empty %}
+                        <p>No marks available</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notices Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4>Notices</h4>
+            {% for notice in notices %}
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <strong>{{ notice.title }}</strong> - <small>{{ notice.posted_on }}</small>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ notice.content }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No notices available for you.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

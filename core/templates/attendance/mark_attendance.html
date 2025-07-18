@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Mark Attendance</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {{ attendance_form.as_p }}
+
+        <div id="students-section"></div>
+
+        <button type="submit" class="btn btn-primary mt-3">Submit Attendance</button>
+    </form>
+</div>
+
+<script>
+    const form = document.querySelector('form');
+    const subject = document.getElementById('id_subject');
+    const year = document.getElementById('id_year');
+    const section = document.getElementById('id_section');
+    const studentsSection = document.getElementById('students-section');
+
+    function fetchStudents() {
+        fetch(`/api/students/?year=${year.value}&section=${section.value}`)
+        .then(res => res.json())
+        .then(data => {
+            studentsSection.innerHTML = '';
+            data.forEach(s => {
+                studentsSection.innerHTML += `
+                <div class="form-group">
+                    <label>${s.name}</label>
+                    <select name="status_${s.id}" class="form-control">
+                        <option value="Present">Present</option>
+                        <option value="Absent">Absent</option>
+                    </select>
+                </div>
+                `;
+            });
+        });
+    }
+
+    year.addEventListener('change', fetchStudents);
+    section.addEventListener('change', fetchStudents);
+</script>
+{% endblock %}

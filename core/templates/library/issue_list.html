@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Book Issues</h3>
+    <a href="{% url 'issue_book' %}" class="btn btn-success mb-3">+ Issue Book</a>
+    <table class="table table-striped">
+        <thead><tr><th>Book</th><th>Issued To</th><th>Issued On</th><th>Return Date</th><th>Returned</th><th>Fine</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for i in issues %}
+            <tr>
+                <td>{{ i.book.title }}</td>
+                <td>{{ i.issued_to.get_full_name }}</td>
+                <td>{{ i.issue_date }}</td>
+                <td>{{ i.return_date }}</td>
+                <td>{{ i.returned_on|default:'Not Returned' }}</td>
+                <td>
+                    {% if i.returned_on %}
+                        ₹{{ i.fine_amount }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not i.returned_on %}
+                    <a href="{% url 'return_book' i.pk %}" class="btn btn-sm btn-warning">Return</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

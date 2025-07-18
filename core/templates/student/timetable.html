@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>📅 Student Timetable</h2>
+
+{% if timetable %}
+  <table border="1" cellpadding="10">
+    <tr>
+      <th>Day</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Subject</th>
+      <th>Faculty</th>
+      <th>Room</th>
+    </tr>
+    {% for entry in timetable %}
+      <tr>
+        <td>{{ entry.day }}</td>
+        <td>{{ entry.start_time }}</td>
+        <td>{{ entry.end_time }}</td>
+        <td>{{ entry.subject.name }}</td>
+        <td>{{ entry.faculty.user.username }}</td>
+        <td>{{ entry.room }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No timetable entries found.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Results for {{ student.user.get_full_name }}</h3>
+    {% for exam_data in data %}
+    <div class="card mb-3">
+        <div class="card-header">
+            {{ exam_data.exam.name }} - {{ exam_data.percentage }}%
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead><tr><th>Subject</th><th>Mark</th><th>Total</th><th>%</th></tr></thead>
+                <tbody>
+                    {% for mark in exam_data.marks %}
+                    <tr>
+                        <td>{{ mark.subject.name }}</td>
+                        <td>{{ mark.marks_obtained }}</td>
+                        <td>{{ mark.total_marks }}</td>
+                        <td>{{ mark.percentage|floatformat:2 }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Welcome, {{ request.user.get_full_name }} (HOD)</h2>
+
+    <div class="row mt-3">
+
+        <!-- Faculty Report -->
+        <div class="col-md-6">
+            <div class="card bg-info text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Faculty Report</h5>
+                    {% for faculty in faculty_list %}
+                        <p>
+                            <strong>{{ faculty.user.get_full_name }}</strong><br>
+                            {{ faculty.department.name }}<br>
+                            Subjects:
+                            {% for sub in faculty.subjects.all %}
+                                {{ sub.name }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                None
+                            {% endfor %}
+                        </p>
+                        <hr class="bg-light">
+                    {% empty %}
+                        <p>No faculty records found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Report -->
+        <div class="col-md-6">
+            <div class="card bg-success text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Academic Summary</h5>
+                    {% for course in academic_summary %}
+                        <p>
+                            <strong>{{ course.name }}</strong><br>
+                            Total Students: {{ course.student_count }}<br>
+                            Total Subjects: {{ course.subject_count }}
+                        </p>
+                        <hr class="bg-light">
+                    {% empty %}
+                        <p>No academic data available.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Notice Management -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Notices</h5>
+                    <p>Create and manage announcements.</p>
+                    <a href="{% url 'notice_list' %}" class="btn btn-dark btn-sm mb-2">View All Notices</a>
+                    <a href="{% url 'create_notice' %}" class="btn btn-dark btn-sm">Create New Notice</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

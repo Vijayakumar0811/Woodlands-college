@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Attendance Report</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Total Classes</th>
+                <th>Present</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student, data in report.items %}
+            <tr>
+                <td>{{ student.user.get_full_name }}</td>
+                <td>{{ data.total }}</td>
+                <td>{{ data.present }}</td>
+                <td>{{ data.percentage }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

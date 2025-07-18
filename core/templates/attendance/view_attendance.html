@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Attendance Records</h3>
+    <table class="table table-striped">
+        <thead><tr><th>Date</th><th>Subject</th><th>Year</th><th>Section</th></tr></thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.subject.name }}</td>
+                <td>{{ record.year }}</td>
+                <td>{{ record.section }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

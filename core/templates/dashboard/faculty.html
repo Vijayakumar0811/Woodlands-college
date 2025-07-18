@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Welcome, {{ request.user.get_full_name }} (Faculty)</h2>
+
+    <div class="row mt-3">
+
+        <!-- My Assigned Classes -->
+        <div class="col-md-4">
+            <div class="card bg-info text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">My Classes</h5>
+                    {% for mapping in subject_mappings %}
+                        <p>{{ mapping.subject.name }} - {{ mapping.course.name }} ({{ mapping.section.name }})</p>
+                    {% empty %}
+                        <p>No classes assigned.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Summary -->
+        <div class="col-md-4">
+            <div class="card bg-success text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Attendance</h5>
+                    {% for att in attendance_summary %}
+                        <p><strong>{{ att.subject__name }}</strong>: {{ att.present }} / {{ att.total }} present</p>
+                    {% empty %}
+                        <p>No attendance records yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Grades Given -->
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Grades</h5>
+                    {% for exam in grades %}
+                        <p>{{ exam.student.user.get_full_name }} - {{ exam.subject.name }}: {{ exam.marks_obtained }}/{{ exam.total_marks }}</p>
+                    {% empty %}
+                        <p>No grades submitted yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+

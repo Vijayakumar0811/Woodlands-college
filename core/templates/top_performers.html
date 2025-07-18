@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Top Performers</h3>
+  <table class="table table-bordered">
+    <thead><tr><th>Student</th><th>Average Mark</th></tr></thead>
+    <tbody>
+      {% for row in data %}
+      <tr>
+        <td>{{ row.student__user__first_name }}</td>
+        <td>{{ row.avg_mark }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

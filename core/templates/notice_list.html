@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Notices for {{ request.user.role }}</h3>
+  {% for notice in notices %}
+    <div class="card mb-3">
+      <div class="card-header">
+        <strong>{{ notice.title }}</strong> - {{ notice.posted_on }}
+      </div>
+      <div class="card-body">
+        <p>{{ notice.content }}</p>
+      </div>
+    </div>
+  {% empty %}
+    <p>No notices found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

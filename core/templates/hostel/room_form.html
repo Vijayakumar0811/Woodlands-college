@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Add Hostel Room</h3>
+    <form method="POST">{% csrf_token %} {{ form.as_p }}
+        <button class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}

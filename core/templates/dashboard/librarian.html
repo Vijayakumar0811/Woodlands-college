@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Welcome, {{ request.user.get_full_name }} (Librarian)</h2>
+
+    <div class="row mt-3">
+
+        <!-- Manage Books -->
+        <div class="col-md-4">
+            <div class="card bg-primary text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Books</h5>
+                    <p>View and add books to the library collection.</p>
+                    <a href="{% url 'book_list' %}" class="btn btn-light btn-sm mb-1">View All Books</a>
+                    <a href="{% url 'book_add' %}" class="btn btn-light btn-sm">Add New Book</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Issues -->
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Issue Books</h5>
+                    <p>View issued books and issue new ones.</p>
+                    <a href="{% url 'issue_list' %}" class="btn btn-dark btn-sm mb-1">Issued List</a>
+                    <a href="{% url 'issue_book' %}" class="btn btn-dark btn-sm">Issue New Book</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Returns Info -->
+        <div class="col-md-4">
+            <div class="card bg-success text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Returns</h5>
+                    <p>Handle book returns from students or staff.</p>
+                    <a href="{% url 'issue_list' %}" class="btn btn-light btn-sm">Return a Book</a>
+                    <!-- You can show a modal or list with return buttons if needed -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

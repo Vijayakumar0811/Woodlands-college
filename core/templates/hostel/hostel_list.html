@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Hostel List</h3>
+    <a href="{% url 'hostel_add' %}" class="btn btn-success mb-3">+ Add Hostel</a>
+    <table class="table">
+        <thead><tr><th>Name</th><th>Total Rooms</th></tr></thead>
+        <tbody>
+            {% for h in hostels %}
+            <tr>
+                <td>{{ h.name }}</td>
+                <td>{{ h.total_rooms }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

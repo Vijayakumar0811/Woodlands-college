@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Welcome, {{ request.user.get_full_name }} (Accountant)</h2>
+    <div class="row mt-3">
+
+        <!-- Fee Structure -->
+        <div class="col-md-4">
+            <div class="card bg-primary text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Fee Structure</h5>
+                    <p>Define and view academic year fee structures.</p>
+                    <a href="{% url 'fee_structure_list' %}" class="btn btn-light btn-sm mb-1">View Structures</a>
+                    <a href="{% url 'fee_structure_add' %}" class="btn btn-light btn-sm">Add Structure</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fee Payments -->
+        <div class="col-md-4">
+            <div class="card bg-success text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Fee Payments</h5>
+                    <p>Track and record student fee payments.</p>
+                    <a href="{% url 'fee_payment_list' %}" class="btn btn-light btn-sm mb-1">View Payments</a>
+                    <a href="{% url 'fee_payment_add' %}" class="btn btn-light btn-sm">Add Payment</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

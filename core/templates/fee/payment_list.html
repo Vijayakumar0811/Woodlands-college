@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Fee Payments</h3>
+    <a href="{% url 'fee_payment_add' %}" class="btn btn-success mb-3">+ Add Payment</a>
+    <table class="table table-striped">
+        <thead><tr><th>Student</th><th>Course</th><th>Paid</th><th>Mode</th><th>Date</th></tr></thead>
+        <tbody>
+            {% for p in payments %}
+            <tr>
+                <td>{{ p.student.user.get_full_name }}</td>
+                <td>{{ p.fee_structure.course.name }}</td>
+                <td>₹{{ p.amount_paid }}</td>
+                <td>{{ p.mode }}</td>
+                <td>{{ p.date_paid }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

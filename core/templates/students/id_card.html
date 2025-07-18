@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .id-card {
+            width: 300px;
+            height: 180px;
+            border: 2px solid #000;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+        .photo {
+            float: right;
+            width: 70px;
+            height: 90px;
+            border: 1px solid #000;
+        }
+        .info {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="id-card">
+        <h4>Woodlands School of Engineering</h4>
+        <div class="info">
+            <strong>Name:</strong> {{ student.user.get_full_name }}<br>
+            <strong>Roll No:</strong> {{ student.roll_number }}<br>
+            <strong>Course:</strong> {{ student.course }}<br>
+            <strong>Section:</strong> {{ student.section }}<br>
+            <strong>Year:</strong> {{ student.year }}<br>
+        </div>
+        {% if student.profile_pic %}
+            <img src="{{ student.profile_pic.url }}" class="photo">
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; display: flex; background: #f4f4f4; }
+    .sidebar {
+      width: 220px; background-color: #11375B; color: white; height: 100vh; padding: 20px;
+    }
+    .sidebar h3 { margin-bottom: 20px; }
+    .nav-link {
+      display: block; margin: 10px 0; color: white; text-decoration: none; padding: 8px 10px; border-radius: 6px;
+    }
+    .nav-link:hover, .nav-link.active { background-color: #205d8a; }
+    .content { padding: 30px; flex-grow: 1; }
+  </style>
+</head>
+<body>
+ 
+  {% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+  {% endif %}
+  <div class="sidebar">
+    <h3>{{ request.user.role.name }} Panel</h3>
+    <a href="{% url 'redirect_dashboard' %}" class="nav-link">Home</a>
+    <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+  </div>
+  <div class="content">
+    {% block content %}
+    {% endblock %}
+  </div>
+ 
+</body>
+</html>

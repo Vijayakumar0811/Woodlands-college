@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>{% if faculty_form.instance.pk %}Edit Faculty{% else %}Add Faculty{% endif %}</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">{{ user_form.as_p }}</div>
+            <div class="col-md-6">{{ faculty_form.as_p }}</div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Save</button>
+        <a href="{% url 'faculty_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+    </form>
+</div>
+{% endblock %}
