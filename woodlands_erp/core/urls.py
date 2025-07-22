@@ -45,7 +45,7 @@ urlpatterns = [
     path('attendance/mark/', views.mark_attendance, name='mark_attendance'),
     path('attendance/view/', views.view_attendance, name='view_attendance'),
 
-   # path('attendance/submit/', views.submit_attendance, name='submit_attendance'),
+ 
     path('fee/structure/', views.fee_structure_list, name='fee_structure_list'),
     path('fee/structure/add/', views.fee_structure_add, name='fee_structure_add'),
     path('fee/structure/edit/<int:pk>/', views.fee_structure_edit, name='fee_structure_edit'),
@@ -74,7 +74,7 @@ urlpatterns = [
     path('notices/create/', views.create_notice, name='create_notice'),
     path('messages/', views.message_list, name='message_list'),
     path('messages/send/', views.send_message, name='send_message'),
-   # path('reports/attendance/', views.attendance_report, name='attendance_report'),
+  
     path('reports/fee/', views.fee_report, name='fee_report'),
     path('reports/top/', views.top_performers, name='top_performers'),
     path('reports/export-fee/', views.export_fee_csv, name='export_fee_csv'),
@@ -86,11 +86,7 @@ urlpatterns = [
     path('student/timetable/download/', views.student_timetable_pdf, name='student_timetable_pdf'),
     path('faculty/attendance/', views.mark_faculty_attendance, name='mark_faculty_attendance'),
     path('faculty/attendance/report/', views.faculty_attendance_report, name='faculty_attendance_report'),
-    #path('api/departments/', views.get_departments, name='get_departments'),
-    #path('api/subjects/', views.get_subjects, name='get_subjects'),
-    #path('api/students/', views.get_students_by_subject, name='get_students_by_subject'),
-    #path('attendance/mark/', views.mark_attendance, name='submit_attendance'),
-    #path('api/student-list/', views.student_list_api, name='student_list_api'),
+    
     path('reports/gpa/', views.gpa_report_view, name='gpa_report'),
     path('gpa-graph/', views.gpa_graph_view, name='gpa_graph'),
     path('revenue-report/', views.revenue_report_view, name='revenue_report'),
