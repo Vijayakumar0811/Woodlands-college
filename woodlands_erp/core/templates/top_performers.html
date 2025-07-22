@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4">🏆 Top Performers</h3>
+
+  {% if data %}
+    <table class="table table-striped table-bordered shadow-sm">
+      <thead class="table-dark">
+        <tr>
+          <th>👨‍🎓 Student</th>
+          <th>📊 Average Mark</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          <td>{{ row.student__user__first_name }}</td>
+          <td><strong>{{ row.avg_mark|floatformat:2 }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-info">
+      No performer data available yet.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-4">🎓 Results for {{ student.user.get_full_name }}</h3>
+
+    {% if data %}
+        {% for exam_data in data %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                {{ exam_data.exam.name }} - <strong>{{ exam_data.percentage }}%</strong>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>📘 Subject</th>
+                            <th>🧮 Marks</th>
+                            <th>🧾 Total</th>
+                            <th>📊 %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mark in exam_data.marks %}
+                        <tr>
+                            <td>{{ mark.subject.name }}</td>
+                            <td>{{ mark.marks_obtained }}</td>
+                            <td>{{ mark.total_marks }}</td>
+                            <td>{{ mark.percentage|floatformat:2 }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-warning">No results available yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

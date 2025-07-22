@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-3">🚐 Transport Vehicles</h3>
+    <a href="{% url 'vehicle_add' %}" class="btn btn-success mb-3">+ Add Vehicle</a>
+
+    <div class="card shadow-sm">
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Vehicle Number</th>
+                        <th>Route</th>
+                        <th>Driver</th>
+                        <th>Capacity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in vehicles %}
+                    <tr>
+                        <td>{{ v.number_plate }}</td>
+                        <td>{{ v.route }}</td>
+                        <td>{{ v.driver_name }}</td>
+                        <td>{{ v.capacity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

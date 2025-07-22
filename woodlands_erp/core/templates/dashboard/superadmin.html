@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}Super Admin Dashboard{% endblock %}
+
+{% block sidebar_links %}
+<style>
+  .accordion-button {
+    background-color: #11375B;  
+    color: #fff;
+  }
+  .accordion-button:not(.collapsed) {
+    background-color: #495057;
+    color: #fff;
+  }
+  .accordion-body {
+    background-color: #3c434a;
+  }
+  .accordion-body .nav-link {
+    color: #fff;
+    padding-left: 1rem;
+    display: block;
+  }
+  .accordion-body .nav-link:hover {
+    color: #ffc107;
+    text-decoration: underline;
+  }
+  .accordion-item {
+    border: none;
+  }
+</style>
+
+<div class="accordion" id="sidebarAccordion">
+
+  <!-- Student Management -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingStudent">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStudent">
+        🎓 Student Management
+      </button>
+    </h2>
+    <div id="collapseStudent" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'student_list' %}" class="nav-link">📋 View Students</a>
+        <a href="{% url 'student_add' %}" class="nav-link">➕ Add Student</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faculty Management -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFaculty">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFaculty">
+        👩‍🏫 Faculty Management
+      </button>
+    </h2>
+    <div id="collapseFaculty" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'faculty_list' %}" class="nav-link">👥 View Faculty</a>
+        <a href="{% url 'faculty_add' %}" class="nav-link">➕ Add Faculty</a>
+        <a href="{% url 'subject_mapping_list' %}" class="nav-link">📚 Subject Mapping</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exam Management -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingExam">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExam">
+        📝 Exam Management
+      </button>
+    </h2>
+    <div id="collapseExam" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'exam_list' %}" class="nav-link">📚 View Exams</a>
+        <a href="{% url 'exam_add' %}" class="nav-link">➕ Add Exam</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fee Management -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFee">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFee">
+        💰 Fee Management
+      </button>
+    </h2>
+    <div id="collapseFee" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'fee_structure_list' %}" class="nav-link">📂 View Fee Structure</a>
+        <a href="{% url 'fee_payment_list' %}" class="nav-link">💳 Payments</a>
+        <a href="{% url 'fee_payment_add' %}" class="nav-link">➕ Add Payment</a>
+        <a href="{% url 'fee_report' %}" class="nav-link">📈 Collection Report</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Library -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingLibrary">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLibrary">
+        📚 Library
+      </button>
+    </h2>
+    <div id="collapseLibrary" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'book_list' %}" class="nav-link">📖 View Books</a>
+        <a href="{% url 'book_add' %}" class="nav-link">➕ Add Book</a>
+        <a href="{% url 'issue_list' %}" class="nav-link">📦 Issued Books</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transport -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingTransport">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTransport">
+        🚐 Transport
+      </button>
+    </h2>
+    <div id="collapseTransport" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'vehicle_list' %}" class="nav-link">🚐 View Vehicles</a>
+        <a href="{% url 'vehicle_add' %}" class="nav-link">➕ Add Vehicle</a>
+        <a href="{% url 'assign_transport' %}" class="nav-link">📍 Assign Student</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hostel -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingHostel">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHostel">
+        🏘️ Hostel
+      </button>
+    </h2>
+    <div id="collapseHostel" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'hostel_list' %}" class="nav-link">🏘️ View Hostels</a>
+        <a href="{% url 'hostel_room_list' %}" class="nav-link">🛏️ Rooms</a>
+        <a href="{% url 'allocate_hostel' %}" class="nav-link">➕ Allocate Room</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notices -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingNotices">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNotices">
+        📢 Notices & Messages
+      </button>
+    </h2>
+    <div id="collapseNotices" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'notice_list' %}" class="nav-link">📜 View Notices</a>
+        <a href="{% url 'create_notice' %}" class="nav-link">📝 Create Notice</a>
+        <a href="{% url 'message_list' %}" class="nav-link">✉️ Messages</a>
+        <a href="{% url 'send_message' %}" class="nav-link">📨 Send Message</a>
+      </div>
+    </div>
+  </div>
+  <!-- Timetable Management -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingTimetable">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTimetable">
+        🕒 Timetable Management
+      </button>
+    </h2>
+    <div id="collapseTimetable" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <!-- Weekly View: All Timetables -->
+        <a href="{% url 'timetable_list' %}" class="nav-link" title="View all class and room-wise weekly schedules">📘 View All Timetables</a>
+        
+        <!-- Add Timetable with Conflict Detection -->
+        <a href="{% url 'timetable_add' %}" class="nav-link" title="Add new entry with conflict detection for faculty/room">➕ Add New Entry</a>
+        <!-- Exportable PDF -->
+        <a href="{% url 'timetable_print' %}" class="nav-link" title="Download timetable in printable PDF format">🖨️ Print/Export Timetable</a>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingReports">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReports">
+        📈 Reports & Analytics
+      </button>
+    </h2>
+    <div id="collapseReports" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'top_performers' %}" class="nav-link">🏅 Top Performers</a>
+        <a href="{% url 'attendance_report' %}" class="nav-link">📊 Attendance Report</a>
+        <a href="{% url 'revenue_report' %}" class="nav-link">💸 Revenue Reports</a>
+        <a href="{% url 'gpa_graph' %}" class="nav-link">📉 GPA Performance Graphs</a>
+        <a href="{% url 'gpa_report' %}" class="nav-link">📉 GPA Report</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Welcome, Super Admin! 🎉</h2>
+
+  <div class="row">
+    <!-- Notices -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          📢 Latest Notices
+        </div>
+        <div class="card-body">
+          {% for notice in notices %}
+            <p><strong>{{ notice.title }}</strong> - {{ notice.created_at|date:"d M Y" }}</p>
+          {% empty %}
+            <p>No notices available.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

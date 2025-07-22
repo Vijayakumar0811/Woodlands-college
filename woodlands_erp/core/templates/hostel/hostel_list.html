@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3">🏨 Hostel List</h3>
+
+  <a href="{% url 'hostel_add' %}" class="btn btn-success mb-3">+ Add Hostel</a>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <table class="table table-bordered mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>🏢 Name</th>
+            <th>🛏️ Total Rooms</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in hostels %}
+          <tr>
+            <td>{{ h.name }}</td>
+            <td>{{ h.total_rooms }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2" class="text-center text-muted">No hostels found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

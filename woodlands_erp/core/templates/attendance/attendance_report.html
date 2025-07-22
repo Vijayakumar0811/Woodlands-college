@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-md-12">
+      <div class="card shadow">
+        <div class="card-body">
+          <h3 class="mb-4">📅 Attendance Records</h3>
+
+          {% if records %}
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+              <thead class="table-primary">
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Year</th>
+                  <th scope="col">Section</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for record in records %}
+                <tr>
+                  <td>{{ record.date }}</td>
+                  <td>{{ record.subject.name }}</td>
+                  <td>{{ record.year }}</td>
+                  <td>{{ record.section }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+            <div class="alert alert-info">
+              No attendance records available.
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3">🏠 Allocate Hostel Room</h3>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="POST">
+        {% csrf_token %}
+
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            {{ form.errors }}
+          </div>
+        {% endif %}
+
+        <div class="row">
+          <div class="col-md-6">
+            {{ form.student.label_tag }} {{ form.student }}
+          </div>
+          <div class="col-md-6">
+            {{ form.room.label_tag }} {{ form.room }}
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-md-6">
+            {{ form.check_in.label_tag }} {{ form.check_in }}
+          </div>
+          <div class="col-md-6">
+            {{ form.check_out.label_tag }} {{ form.check_out }}
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-md-6">
+            {{ form.hostel_fee.label_tag }} {{ form.hostel_fee }}
+          </div>
+          <div class="col-md-6">
+            {{ form.paid.label_tag }} {{ form.paid }}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Allocate Room</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

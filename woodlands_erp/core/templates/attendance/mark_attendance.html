@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-sm-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="mb-3">📝 Mark Attendance</h3>
+          
+          <form method="POST">
+            {% csrf_token %}
+            {{ attendance_form.as_p }}
+
+            <div id="students-section" class="mt-3"></div>
+
+            <button type="submit" class="btn btn-primary mt-4">Submit Attendance</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const year = document.getElementById('id_year');
+  const section = document.getElementById('id_section');
+  const studentsSection = document.getElementById('students-section');
+
+  function fetchStudents() {
+    if (year.value && section.value ) {
+      fetch(`/api/students/?year=${year.value}&section=${section.value}`)
+        .then(res => res.json())
+        .then(data => {
+          studentsSection.innerHTML = '';
+          data.forEach(s => {
+            studentsSection.innerHTML += `
+              <div class="mb-3">
+                <label class="form-label fw-bold">${s.name}</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="status_${s.id}" id="present_${s.id}" value="Present" checked>
+                  <label class="form-check-label" for="present_${s.id}">
+                    Present
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="status_${s.id}" id="absent_${s.id}" value="Absent">
+                  <label class="form-check-label" for="absent_${s.id}">
+                    Absent
+                  </label>
+                </div>
+              </div>
+            `;
+          });
+        });
+    }
+  }
+
+  year.addEventListener('change', fetchStudents);
+  section.addEventListener('change', fetchStudents);
+</script>
+
+{% endblock %}

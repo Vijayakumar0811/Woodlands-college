@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-4">💰 Fee Status</h3>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Total Fee:</strong> ₹{{ student.total_fee }}</p>
+            <p><strong>Paid:</strong> ₹{{ total_paid }}</p>
+            <p><strong>Due:</strong> ₹{{ total_due }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

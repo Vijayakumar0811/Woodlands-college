@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3">💵 Fee Payments</h3>
+
+  <a href="{% url 'fee_payment_add' %}" class="btn btn-success mb-3">+ Add Payment</a>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Student</th>
+          <th>Course</th>
+          <th>Paid Amount</th>
+          <th>Payment Mode</th>
+          <th>Date Paid</th>
+          <th>Receipt</th> <!-- NEW COLUMN -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+        <tr>
+          <td>{{ p.student.user.get_full_name }}</td>
+          <td>{{ p.fee_structure.course.name }}</td>
+          <td>₹{{ p.amount_paid }}</td>
+          <td>{{ p.mode }}</td>
+          <td>{{ p.date_paid }}</td>
+          <td>
+            <a href="{% url 'generate_fee_receipt_pdf' p.id %}" class="btn btn-outline-primary btn-sm" target="_blank">
+              📄 Download
+            </a>
+            <a href="{% url 'export_fee_csv' %}" class="btn btn-outline-success">⬇️ Export CSV</a>
+
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3">💰 Fee Collection Report</h3>
+
+  <div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'export_fee_csv' %}" class="btn btn-outline-primary">
+      ⬇️ Export CSV
+    </a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Student</th>
+            <th>Total Paid (₹)</th>
+            <th>Total Due (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
+          <tr>
+            <td>{{ row.student__user__first_name }}</td>
+            <td>{{ row.total_paid }}</td>
+            <td>{{ row.total_due }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

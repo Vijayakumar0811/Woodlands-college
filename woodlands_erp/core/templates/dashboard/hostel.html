@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Hostel Incharge Dashboard</h2>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <a href="{% url 'hostel_list' %}" class="btn btn-primary w-100">Manage Hostels</a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'room_list' %}" class="btn btn-secondary w-100">Manage Rooms</a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'allocate_hostel' %}" class="btn btn-success w-100">Allocate Students</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

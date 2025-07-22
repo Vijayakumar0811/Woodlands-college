@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}HOD Dashboard{% endblock %}
+
+{% block sidebar_links %}
+<style>
+  .accordion-button {
+    background-color: #11375B;  
+    color: #fff;
+  }
+  .accordion-button:not(.collapsed) {
+    background-color: #495057;
+    color: #fff;
+  }
+  .accordion-body {
+    background-color: #3c434a;
+  }
+  .accordion-body .nav-link {
+    color: #fff;
+    padding-left: 1rem;
+    display: block;
+  }
+  .accordion-body .nav-link:hover {
+    color: #ffc107;
+    text-decoration: underline;
+  }
+  .accordion-item {
+    border: none;
+  }
+</style>
+
+<div class="accordion" id="hodSidebarAccordion">
+
+  <!-- Faculty Management -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFaculty">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFaculty">
+        👩‍🏫 Faculty Management
+      </button>
+    </h2>
+    <div id="collapseFaculty" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'faculty_list' %}" class="nav-link">👥 View Faculty</a>
+        <a href="{% url 'faculty_add' %}" class="nav-link">➕ Add Faculty</a>
+        <a href="{% url 'subject_mapping_list' %}" class="nav-link">📚 Subject Mapping</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports & Analytics -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingReports">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReports">
+        📈 Reports & Analytics
+      </button>
+    </h2>
+    <div id="collapseReports" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        <a href="{% url 'top_performers' %}" class="nav-link">🏅 Top Performers</a>
+        <a href="{% url 'attendance_report' %}" class="nav-link">📊 Attendance Report</a>
+        <a href="{% url 'revenue_report' %}" class="nav-link">💸 Revenue Reports</a>
+        <a href="{% url 'gpa_graph' %}" class="nav-link">📉 GPA Performance Graphs</a>
+        <a href="{% url 'gpa_report' %}" class="nav-link">📉 GPA Report</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keep Notices as-is -->
+  <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#manageNoticeModal">📢 Manage Notices</a>
+
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Welcome, {{ request.user.get_full_name }} (HOD)</h2>
+
+    <!-- GENERAL NOTICES -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4>📢 General Notices</h4>
+            {% for notice in notices %}
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <strong>{{ notice.title }}</strong> - <small>{{ notice.posted_on }}</small>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ notice.content }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No notices available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="manageNoticeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">🛠️ Manage Notices</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <a href="{% url 'notice_list' %}" class="btn btn-dark btn-sm mb-2">View All Notices</a>
+        <a href="{% url 'create_notice' %}" class="btn btn-dark btn-sm">Create New Notice</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Faculty Leave Requests Section -->
+<div class="row mt-5">
+  <div class="col-12">
+    <h4>📅 Leave Requests</h4>
+
+    {% if request.user.role.name == "Faculty" %}
+      <a href="{% url 'faculty_leave_apply' %}" class="btn btn-success mb-3">+ Apply for Leave</a>
+    {% endif %}
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Faculty</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+            {% if request.user.role == "hod" %}
+              <th>Actions</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for leave in leaves %}
+          <tr>
+            <td>{{ leave.faculty.user.get_full_name }}</td>
+            <td>{{ leave.date }}</td>
+            <td>{{ leave.reason }}</td>
+            <td>
+              {% if leave.status == "Pending" %}
+                  <span class="badge bg-warning text-dark">Pending</span>
+              {% elif leave.status == "Approved" %}
+                  <span class="badge bg-success">Approved</span>
+              {% elif leave.status == "Rejected" %}
+                  <span class="badge bg-danger">Rejected</span>
+              {% endif %}
+            </td>
+
+            {% if request.user.role == "hod" %}
+            <td>
+              {% if leave.status == "Pending" %}
+                <a href="{% url 'leave_approve' leave.pk %}" class="btn btn-sm btn-outline-success me-1">Approve</a>
+                <a href="{% url 'leave_reject' leave.pk %}" class="btn btn-sm btn-outline-danger">Reject</a>
+              {% else %}
+                <em class="text-muted">No Actions</em>
+              {% endif %}
+            </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+

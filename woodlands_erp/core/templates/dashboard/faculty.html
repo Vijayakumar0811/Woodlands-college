@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Welcome, {{ request.user.get_full_name }} <small class="text-muted">(Faculty)</small></h2>
+
+    <div class="row">
+
+        <!-- Manage Classes -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-primary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📚 Manage Classes</h5>
+                    <p>View your assigned subjects.</p>
+                    {% for subject in subjects %}
+                        <p><strong>{{ subject.name }}</strong> - {{ subject.course.name }}</p>
+                    {% empty %}
+                        <p>No subjects assigned.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-dark bg-warning h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📝 Attendance</h5>
+                    <form method="POST" action="{% url 'mark_attendance' %}">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label class="form-label">Select Subject:</label>
+                            <select name="subject" class="form-control form-control-sm">
+                                {% for subject in subjects %}
+                                    <option value="{{ subject.id }}">{{ subject.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Date:</label>
+                            <input type="date" name="date" class="form-control form-control-sm">
+                        </div>
+                        <button type="submit" class="btn btn-dark btn-sm">Mark Attendance</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-danger h-100">
+                <div class="card-body">
+                    <h5 class="card-title">🛌 Apply for Leave</h5>
+                    <p>Submit a leave request to the HOD.</p>
+                    <a href="{% url 'faculty_leave_apply' %}" class="btn btn-light btn-sm">Apply Now</a>
+                </div>
+            </div>
+        </div>
+        <!-- Manage Grades -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-white bg-success h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📊 Manage Grades</h5>
+                    <form method="GET" action="{% url 'exam_list' %}">
+                        <label class="form-label">Select Exam:</label>
+                        <select name="exam_id" class="form-control form-control-sm mb-2">
+                            {% for exam in exams %}
+                                <option value="{{ exam.id }}">{{ exam.name }} - {{ exam.date }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-light btn-sm">Enter Marks</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="row mt-4">
+  <div class="col-12">
+    <h4>📅 My Leave Requests</h4>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for leave in faculty_leaves %}
+          <tr>
+            <td>{{ leave.date }}</td>
+            <td>{{ leave.reason }}</td>
+            <td>
+              {% if leave.status == "Approved" %}
+                <span class="badge bg-success">{{ leave.status }}</span>
+              {% elif leave.status == "Rejected" %}
+                <span class="badge bg-danger">{{ leave.status }}</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">{{ leave.status }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3">No leave requests submitted.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

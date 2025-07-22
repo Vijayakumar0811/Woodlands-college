@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3">🏷️ Fee Structures</h3>
+
+  <a href="{% url 'fee_structure_add' %}" class="btn btn-success mb-3">+ Add Structure</a>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Course</th>
+          <th>Year</th>
+          <th>Total Fee</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fs in structures %}
+        <tr>
+          <td>{{ fs.course.name }}</td>
+          <td>{{ fs.year }}</td>
+          <td>₹{{ fs.total_amount }}</td>
+          <td>
+            <a href="{% url 'fee_structure_edit' fs.pk %}" class="btn btn-sm btn-primary me-1">✏️ Edit</a>
+            <a href="{% url 'fee_structure_delete' fs.pk %}" class="btn btn-sm btn-danger">🗑️ Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

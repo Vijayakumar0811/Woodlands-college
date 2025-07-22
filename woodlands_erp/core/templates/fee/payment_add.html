@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3">💳 Add Fee Payment</h3>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">💾 Save Payment</button>
+        <a href="{% url 'fee_payment_list' %}" class="btn btn-secondary">🔙 Back</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

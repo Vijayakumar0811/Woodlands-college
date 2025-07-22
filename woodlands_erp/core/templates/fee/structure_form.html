@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-3">🏷️ Add Fee Structure</h3>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mt-2">💾 Save</button>
+        <a href="{% url 'fee_structure_list' %}" class="btn btn-secondary mt-2">🔙 Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

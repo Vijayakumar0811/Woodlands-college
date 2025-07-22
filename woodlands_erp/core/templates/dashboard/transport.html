@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Welcome, {{ request.user.get_full_name }} (Transport Staff)</h2>
+
+    <div class="row mt-3">
+
+        <!-- View Vehicles -->
+        <div class="col-md-4">
+            <div class="card bg-info text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Vehicles</h5>
+                    <p>View and manage all registered transport vehicles.</p>
+                    <a href="{% url 'vehicle_list' %}" class="btn btn-light btn-sm mb-1">🚐 View Vehicles</a>
+                    <a href="{% url 'vehicle_add' %}" class="btn btn-light btn-sm">➕ Add Vehicle</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assign Transport -->
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Assign Transport</h5>
+                    <p>Assign a student to a transport vehicle.</p>
+                    <a href="{% url 'assign_transport' %}" class="btn btn-dark btn-sm">🚏 Assign Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Allocations -->
+        <div class="col-md-4">
+            <div class="card bg-primary text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">View Allocations</h5>
+                    <p>See which students are assigned to which vehicles.</p>
+                    <a href="{% url 'allocation_list' %}" class="btn btn-light btn-sm">📋 View Allocations</a>
+                </div>
+            </div>
+        </div>
+
+
+{% endblock %}

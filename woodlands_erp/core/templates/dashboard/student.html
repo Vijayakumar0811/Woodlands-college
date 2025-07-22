@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load static %}
+{% csrf_token %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block sidebar_links %}
+  <a href="{% url 'student_timetable' %}" class="nav-link">📅 View Timetable</a>
+  <a href="{% url 'student_attendance' %}" class="nav-link">✅ View Attendance</a>
+  <a href="{% url 'student_fee' %}" class="nav-link">💰 View Fee Status</a>
+  <a href="{% url 'student_marks' %}" class="nav-link">📊 View Marks</a>
+  <a href="{% url 'student_timetable_pdf' %}" class="btn btn-outline-primary float-end mb-3">⬇️ Download Timetable (PDF)</a>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Header with User Photo -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4>👋 Welcome, {{ student.user.get_full_name }}</h4>
+            <p>Role: Student</p>
+        </div>
+        {% if student.profile_pic %}
+            <img src="{{ student.profile_pic.url }}" class="rounded-circle shadow" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #000;">
+        {% endif %}
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- ID Card -->
+        <div class="col-md-6">
+                <div class="shadow-sm p-3 bg-light rounded">
+                    <h5 class="text-center mb-3">Woodlands School of Engineering</h5>
+                    <div class="d-flex justify-content-between">
+                        <div style="font-size: 14px;">
+                            <strong>Name:</strong> {{ student.user.get_full_name }}<br>
+                            <strong>Register No:</strong> {{ student.register_no }}<br>
+                            <strong>Department:</strong> {{ student.department }}<br>
+                            <strong>Year:</strong> {{ student.year }}
+                            <strong>Section:</strong> {{ student.section }}<br>
+                        </div>
+                        {% if student.profile_pic %}
+                            <img src="{{ student.profile_pic.url }}" class="img-thumbnail ms-2" style="width: 70px; height: 90px; object-fit: cover;">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Notices Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4>📢 Notices</h4>
+            {% for notice in notices %}
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <strong>{{ notice.title }}</strong> - <small>{{ notice.posted_on }}</small>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ notice.content }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No notices available for you.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- Timetable Modal -->
+<!-- Timetable Modal -->
+<div class="modal fade" id="timetableModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">📅 Timetable</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        {% include 'student/timetable.html' %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Attendance Modal -->
+<div class="modal fade" id="attendanceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">✅ Attendance</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <p>Total Classes: {{ total_classes }}</p>
+        <p>Present Days: {{ present_days }}</p>
+        <p><strong>Percentage:</strong> {{ attendance_percent }}%</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fee Modal -->
+<div class="modal fade" id="feeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">💰 Fee Status</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <p>Paid: ₹{{ total_paid }}</p>
+        <p>Due: ₹{{ total_due }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Marks Modal -->
+<div class="modal fade" id="marksModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">📊 Marks</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        {% if marks %}
+          <table class="table table-bordered">
+            <thead><tr><th>Subject</th><th>Marks Obtained</th><th>Total Marks</th></tr></thead>
+            <tbody>
+              {% for mark in marks %}
+                <tr>
+                  <td>{{ mark.subject.name }}</td>
+                  <td>{{ mark.marks_obtained }}</td>
+                  <td>{{ mark.total_marks }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p>No marks available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

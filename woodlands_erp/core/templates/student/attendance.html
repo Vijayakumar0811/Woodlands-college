@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-4">✅ Attendance Summary</h3>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Total Classes:</strong> {{ total_classes }}</p>
+            <p><strong>Present Days:</strong> {{ present_days }}</p>
+            <p><strong>Attendance %:</strong> {{ attendance_percent }}%</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

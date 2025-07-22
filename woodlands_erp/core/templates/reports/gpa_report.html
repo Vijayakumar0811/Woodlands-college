@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GPA Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f8f9fa;
+    }
+    h2 {
+      margin-bottom: 1rem;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin-left: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      margin-top: 2rem;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #dee2e6;
+      text-align: center;
+    }
+    th {
+      background-color: #e9ecef;
+    }
+    .results-summary {
+      margin-top: 2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📘 GPA Report</h2>
+
+    <form method="GET">
+      <div class="form-group">
+        <label for="student">Select Student:</label>
+        <select name="student" id="student">
+          <option value="">-- Choose a student --</option>
+          {% for student in students %}
+            <option value="{{ student.id }}" {% if student.id == selected_student_id %}selected{% endif %}>
+              {{ student.user.get_full_name }}
+            </option>
+          {% endfor %}
+        </select>
+        <button type="submit">📄 View Report</button>
+      </div>
+    </form>
+
+    {% if subject_results %}
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Marks Obtained</th>
+            <th>Total Marks</th>
+            <th>Credits</th>
+            <th>Grade Point</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for result in subject_results %}
+            <tr>
+              <td>{{ result.subject.name }}</td>
+              <td>{{ result.marks_obtained }}</td>
+              <td>{{ result.total_marks }}</td>
+              <td>{{ result.credits }}</td>
+              <td>{{ result.grade_point }}</td>
+              <td>{{ result.grade }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="results-summary">
+        GPA: {{ gpa }} &nbsp; | &nbsp; Percentage: {{ percentage }}%
+      </div>
+    {% elif selected_student_id %}
+      <p>No results found for the selected student.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>✏️ Enter Marks - {{ exam.name }}</h3>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Student</th>
+                                {% for subject in subjects %}
+                                    <th class="text-center">{{ subject.name }}<br><small>(Mark / Total)</small></th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td>{{ student.user.get_full_name }}</td>
+                                {% for subject in subjects %}
+                                <td class="text-center">
+                                    <input type="number" name="mark_{{ student.id }}_{{ subject.id }}" class="form-control d-inline-block w-25" placeholder="Mark" required>
+                                    /
+                                    <input type="number" name="total_{{ student.id }}_{{ subject.id }}" class="form-control d-inline-block w-25" placeholder="Total" required>
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">💾 Save Marks</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

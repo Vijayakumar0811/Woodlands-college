@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Woodlands School of Engineering</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f1f1f1;
+    }
+    .header {
+      background: #11375B;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .login-box {
+      background: #eee;
+      width: 400px;
+      margin: 60px auto;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #11375B;
+      color: white;
+      padding: 10px 30px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .alt-login {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .alt-login img {
+      width: 30px;
+      margin: 0 10px;
+      vertical-align: middle;
+    }
+    .forgot {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="{% static 'core/logo.jpg' %}" alt="Logo" height="60">
+    <h2>WOODLANDS SCHOOL OF ENGINEERING</h2>
+  </div>
+
+  <div class="login-box">
+    {% if messages %}
+      {% for message in messages %}
+      <p style="color: red;">{{ message }}</p>
+       {% endfor %}
+    {% endif %}
+    <h3>Welcome Back...</h3>
+    <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <label>username:</label>
+      <input type="text" name="username" placeholder="Enter username" required>
+
+      <label>Password:</label>
+      <input type="password" name="password" placeholder="Enter password" required>
+
+      <div class="forgot">
+        <label><input type="checkbox"> Remember me</label>
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <button type="submit">Login</button>
+
+      <div class="alt-login">
+        <p>OR CONTINUE WITH</p>
+        <img src="{% static 'core/google.png' %}" alt="Google">
+        <img src="{% static 'core/microsoft.png' %}" alt="Microsoft">
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="text-center">{{ student.user.get_full_name }} - Report Card</h2>
+            <p><strong>Reg No:</strong> {{ student.register_no }}</p>
+            <p><strong>Dept:</strong> {{ student.department }} |
+               <strong>Year:</strong> {{ student.year }} |
+
+            {% for item in data %}
+                <div class="mt-4">
+                    <h5 class="text-center">{{ item.exam.name }}</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Marks Obtained</th>
+                                    <th>Total Marks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for m in item.marks %}
+                                    <tr>
+                                        <td>{{ m.subject.name }}</td>
+                                        <td>{{ m.marks_obtained }}</td>
+                                        <td>{{ m.total_marks }}</td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="2"><strong>Total Percentage</strong></td>
+                                    <td><strong>{{ item.percentage }}%</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

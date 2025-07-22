@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>📊 GPA Report - Student Wise Graph</h3>
+
+    <form method="GET" id="studentForm">
+        <div class="mb-3">
+            <label for="student" class="form-label">Select Student</label>
+            <select name="student" id="student" class="form-select" onchange="document.getElementById('studentForm').submit();">
+                <option value="">-- Choose a student --</option>
+                {% for student in students %}
+                    <option value="{{ student.id }}" {% if student.id == selected_student_id %}selected{% endif %}>
+                        {{ student.user.get_full_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    {% if selected_student_id %}
+    <div class="card mt-4 p-3">
+        <h5 class="mb-3">📘 Marks Obtained</h5>
+        <canvas id="marksChart" width="600" height="300"></canvas>
+        <hr>
+        <h5 class="mb-3">🎯 Grade Point</h5>
+        <canvas id="gpaChart" width="600" height="300"></canvas>
+    </div>
+    {% else %}
+    <p class="mt-4 text-muted">📌 Please select a student to view GPA chart.</p>
+    {% endif %}
+</div>
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const studentId = "{{ selected_student_id }}";
+    if (studentId) {
+        fetch(`/gpa-graph/?student=${studentId}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(json => {
+            const data = json.data;
+
+            if (!data || data.length === 0) {
+                document.getElementById('marksChart').replaceWith("⚠️ No data found for this student.");
+                document.getElementById('gpaChart').replaceWith("");
+                return;
+            }
+
+            const labels = data.map(entry => entry.subject);
+            const marks = data.map(entry => entry.marks_obtained);
+            const gradePoints = data.map(entry => entry.grade_point ?? 0);
+
+            // Marks Chart
+            const marksCtx = document.getElementById('marksChart').getContext('2d');
+            new Chart(marksCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Marks Obtained',
+                        data: marks,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Marks (Out of 100)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // GPA Chart
+            const gpaCtx = document.getElementById('gpaChart').getContext('2d');
+            new Chart(gpaCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Grade Point',
+                        data: gradePoints,
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'Grade Point (0 to 10)'
+                            }
+                        }
+                    }
+                }
+            });
+
+        })
+        .catch(error => {
+            console.error('Error fetching GPA graph:', error);
+        });
+    }
+</script>
+{% endblock %}

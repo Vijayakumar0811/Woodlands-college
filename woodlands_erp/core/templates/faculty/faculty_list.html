@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-4">👩‍🏫 Faculty List</h3>
+    <a href="{% url 'faculty_add' %}" class="btn btn-success mb-3">➕ Add Faculty</a>
+
+    {% if faculty %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th style="width: 160px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in faculty %}
+                <tr>
+                    <td>{{ f.user.get_full_name }}</td>
+                    <td>{{ f.department }}</td>
+                    <td>{{ f.designation }}</td>
+                    <td>
+                        <a href="{% url 'faculty_edit' f.pk %}" class="btn btn-sm btn-primary me-1">✏️ Edit</a>
+                        <a href="{% url 'faculty_delete' f.pk %}" class="btn btn-sm btn-danger">🗑️ Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="alert alert-warning">No faculty records found.</div>
+    {% endif %}
+</div>
+{% endblock %}

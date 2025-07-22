@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4">📅 Leave Requests</h3>
+
+  {% if request.user.role.name == "Faculty" %}
+    <a href="{% url 'faculty_leave_apply' %}" class="btn btn-success mb-4">
+      + Apply for Leave
+    </a>
+  {% endif %}
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Faculty</th>
+          <th>Date</th>
+          <th>Reason</th>
+          <th>Status</th>
+          {% if request.user.role.name == "HOD" %}
+            <th>Actions</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for leave in leaves %}
+        <tr>
+          <td>{{ leave.faculty.user.get_full_name }}</td>
+          <td>{{ leave.date }}</td>
+          <td>{{ leave.reason }}</td>
+          <td>
+            {% if leave.status == "Approved" %}
+              <span class="badge bg-success">{{ leave.status }}</span>
+            {% elif leave.status == "Rejected" %}
+              <span class="badge bg-danger">{{ leave.status }}</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">{{ leave.status }}</span>
+            {% endif %}
+          </td>
+          {% if request.user.role.name == "HOD" %}
+          <td>
+            {% if leave.status == "Pending" %}
+              <a href="{% url 'leave_approve' leave.pk %}" class="btn btn-sm btn-outline-success me-1">Approve</a>
+              <a href="{% url 'leave_reject' leave.pk %}" class="btn btn-sm btn-outline-danger">Reject</a>
+            {% else %}
+              <em class="text-muted">No Actions</em>
+            {% endif %}
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

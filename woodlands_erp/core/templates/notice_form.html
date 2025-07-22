@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="mb-3">📢 Create New Notice</h3>
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-text mb-3">
+          🎯 <strong>Target Roles:</strong> Separate multiple roles with commas (e.g. <code>Student, Faculty</code>)
+        </div>
+        <button type="submit" class="btn btn-primary">📬 Post Notice</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
