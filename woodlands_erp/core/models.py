@@ -51,6 +51,7 @@ class Course(models.Model):
 class Subject(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=10)
+    year = models.IntegerField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     student = models.ManyToManyField('Student')
 
@@ -72,7 +73,8 @@ class Student(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     register_no = models.CharField(max_length=20)
     department = models.CharField(max_length=100)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)  
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True) 
+     
     year = models.IntegerField()
     phone = models.CharField(max_length=15, null=True, blank=True)
     profile_pic = models.ImageField(upload_to='student_photos/', null=True, blank=True)
@@ -85,6 +87,10 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.user.first_name} ({self.register_no})"
 
+class StudentDocument(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='documents')
+    file = models.FileField(upload_to='student_documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 class Faculty(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -170,7 +176,7 @@ class FeeStructure(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.course.name} - Y{self.year} - ₹{self.total_amount}"
+        return f"{self.course.name} - Y{self.year} - ₹{self.total_amount} S{self.section}"
 
 class FeePayment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -426,3 +432,16 @@ class Revenue(models.Model):
     year = models.IntegerField()
     def _str_(self):
         return f"{self.source} - ₹{self.amount}"
+    
+
+class CourseMaterial(models.Model):
+    title = models.CharField(max_length=200)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    year = models.IntegerField()
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    file = models.FileField(upload_to='course_materials/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.course.name})"

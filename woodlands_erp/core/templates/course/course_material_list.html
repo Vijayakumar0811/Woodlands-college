@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Course Materials{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-3">📚 Available Course Materials</h3>
+
+    {% if materials %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Subject</th>
+                        <th>Title</th>
+                        <th>Uploaded By</th>
+                        <th>File</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for material in materials %}
+                    <tr>
+                        <td>{{ material.subject.name }}</td>
+                        <td>{{ material.title }}</td>
+                        <td>{{ material.uploaded_by.get_full_name }}</td>
+                        <td>
+                            <a href="{{ material.file.url }}" class="btn btn-sm btn-outline-primary" download>
+                                ⬇️ Download
+                            </a>
+                        </td>
+                        <td>{{ material.uploaded_at|date:"d M Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">No course materials available at the moment.</div>
+    {% endif %}
+</div>
+{% endblock %}

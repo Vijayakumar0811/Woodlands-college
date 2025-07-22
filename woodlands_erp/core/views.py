@@ -9,10 +9,13 @@ from .forms import CustomUserCreationForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Student, CustomUser , Faculty , Subject ,Parent ,HostelIncharge , Hostel
+from .models import Student, CustomUser , Faculty , Subject ,Parent ,HostelIncharge , Hostel , CourseMaterial
 from .forms import StudentForm, UserForm , FacultyForm , FacultyLeave , FacultyLeaveForm , FacultySubjectMappingForm ,TimetableEntryForm , FacultySubjectMapping , TimetableEntry ,FacultyAttendanceForm
 from .forms import Attendance, AttendanceForm , AttendanceRecord , AttendanceRecordForm ,FeePayment , FeePaymentForm , FeeStructure , FeeStructureForm ,AttendanceRecordFormSet  ,FacultyAttendance
-from .forms import Mark , MarkForm , Exam , ExamForm , Book , BookForm , BookIssue , BookIssueForm , Message , MessageForm , Notice , NoticeForm 
+from .forms import Mark , MarkForm , Exam , ExamForm , Book , BookForm , BookIssue , BookIssueForm , Message , MessageForm , Notice , NoticeForm ,CourseMaterialForm
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Sum
+from .models import FeeStructure, FeePayment, Student
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Vehicle, TransportAllocation
@@ -60,7 +63,7 @@ def login_view(request):
 
             role = getattr(user, 'role', '').strip().lower()
 
-            if role in ['superadmin', 'hod', 'faculty', 'student', 'parent', 'librarian', 'accountant', 'transport']:
+            if role in ['superadmin', 'hod', 'faculty', 'student', 'parent', 'librarian', 'accountant', 'transport','hostel']:
                 return redirect(f'/dashboard/{role}/')
             else:
                 return HttpResponse(f"⚠️ Role '{role}' is invalid or not set for this user.")
@@ -164,46 +167,40 @@ def dashboard_student(request):
         'timetable': timetable,
     })
 
-from django.views.decorators.csrf import csrf_exempt
 
-
-
-#@login_required
-#def student_attendance(request):
- #   student = get_object_or_404(Student, user=request.user)
-    #total_classes = AttendanceRecord.objects.filter(student=student).count()
-  #  present_days = AttendanceRecord.objects.filter(student=student, status="Present").count()
-   # attendance_percent = round((present_days / total_classes) * 100, 2) if total_classes > 0 else 0
-
-    #return render(request, 'student/attendance.html', {
-     #   'total_classes': total_classes,
-      #  'present_days': present_days,
-       # 'attendance_percent': attendance_percent,
-    #})
-
-
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .models import FeeStructure, FeePayment, Student
+from .models import Student, FeeStructure, FeePayment
 
 @login_required
 def student_fee(request):
     student = get_object_or_404(Student, user=request.user)
 
-    # Get fee structure for student's course & year
+    fee_structure = None
+    total_fee = 0
+
     try:
-        fee_structure = FeeStructure.objects.get(course=student.course,year=student.year).first()
+        fee_structure = FeeStructure.objects.filter(
+            year=student.year,
+            section=student.section
+        ).first()
         total_fee = fee_structure.total_amount
     except FeeStructure.DoesNotExist:
-        total_fee = 0
+        fee_structure = None
+        total_fee = 0  
+
     payments = FeePayment.objects.filter(student=student)
     total_paid = payments.aggregate(total=Sum('amount_paid'))['total'] or 0
+
     total_due = total_fee - total_paid
 
     return render(request, 'student/fee.html', {
         'student': student,
+        'fee_structure': fee_structure,
+        'total_fee': total_fee,
         'total_paid': total_paid,
         'total_due': total_due,
-        'total_fee': total_fee,
     })
 
 
@@ -235,10 +232,10 @@ def add_fee_structure(request):
         if form.is_valid():
             fee_structure = form.save()
 
-            # 🔁 Update all matching students
             students = Student.objects.filter(
                 department=fee_structure.department,
-                year=fee_structure.year
+                year=fee_structure.year,
+                section=fee_structure.section
             )
             for student in students:
                 student.total_fee = fee_structure.amount
@@ -317,31 +314,32 @@ def student_list(request):
         'query': query
     })
 
-@login_required
+from .models import StudentDocument
+from .forms import StudentDocumentForm
+
 def student_add(request):
     if request.method == 'POST':
         user_form = UserForm(request.POST)
         student_form = StudentForm(request.POST, request.FILES)
+        files = request.FILES.getlist('documents')  # ✅
 
         if user_form.is_valid() and student_form.is_valid():
-            # Create user first
             user = user_form.save(commit=False)
-
-            # Set password from cleaned_data
             user.set_password(user_form.cleaned_data['password'])
 
-            # ✅ Assign role as student (case-insensitive)
             student_role = Role.objects.filter(name__iexact='student').first()
             if not student_role:
                 return HttpResponse("❌ 'student' role not found in DB.", status=500)
             user.role = student_role
-
             user.save()
 
-            # Link user to student
             student = student_form.save(commit=False)
             student.user = user
             student.save()
+
+            # ✅ Save multiple documents
+            for f in files:
+                StudentDocument.objects.create(student=student, file=f)
 
             return redirect('student_list')
     else:
@@ -352,6 +350,7 @@ def student_add(request):
         'user_form': user_form,
         'student_form': student_form
     })
+
 
 
 
@@ -1312,3 +1311,46 @@ for m in Mark.objects.all():
         m.grade_point = gp
         m.grade = grade
         m.save()
+
+@login_required
+def course_material_list(request):
+    materials = CourseMaterial.objects.all().select_related('subject', 'uploaded_by').order_by('-uploaded_at')
+    return render(request, 'course/course_material_list.html', {'materials': materials})
+
+
+@login_required
+def course_material_upload(request):
+    user = request.user
+    if hasattr(user, 'faculty'):
+        subjects = Subject.objects.filter(id__in=FacultySubjectMapping.objects.filter(faculty=user.faculty).values_list('subject', flat=True))
+    else:
+        subjects = Subject.objects.none()
+
+    if request.method == 'POST':
+        form = CourseMaterialForm(request.POST, request.FILES)
+        if form.is_valid():
+            material = form.save(commit=True)
+            material.uploaded_by = user
+            material.save()
+            return redirect('course_material_list')
+    else:
+        form = CourseMaterialForm()
+
+    return render(request, 'course/course_material_upload.html', {
+        'form': form,
+        'subjects': subjects
+    })
+
+@login_required
+def student_view_course_materials(request):
+    if not hasattr(request.user, 'student'):
+        return HttpResponseForbidden("Only students can access this page.")
+    student = request.user.student
+    materials = CourseMaterial.objects.filter(
+        subject=student.course,
+        subject__year=student.year,
+    ).select_related('subject', 'uploaded_by').order_by('-uploaded_at')
+
+    return render(request, 'course/course_material_list.html', {
+        'materials': materials,
+    })

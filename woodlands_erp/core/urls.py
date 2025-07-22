@@ -23,6 +23,7 @@ urlpatterns = [
     path('student/fee/', views.student_fee, name='student_fee'),
     path('student/marks/', views.student_marks, name='student_marks'),
     path('student/timetable/', views.student_timetable, name='student_timetable'),
+    path('student/materials/', views.student_view_course_materials, name='student_course_materials'),
     path('students/add/', views.student_add, name='student_add'),
     path('students/<int:pk>/edit/', views.student_edit, name='student_edit'),
     path('students/<int:pk>/delete/', views.student_delete, name='student_delete'),
@@ -44,8 +45,8 @@ urlpatterns = [
     path('timetable/print/', views.timetable_print, name='timetable_print'),
     path('attendance/mark/', views.mark_attendance, name='mark_attendance'),
     path('attendance/view/', views.view_attendance, name='view_attendance'),
-
- 
+    path('course-materials/', views.course_material_list, name='course_material_list'),
+    path('course-materials/upload/', views.course_material_upload, name='course_material_upload'),
     path('fee/structure/', views.fee_structure_list, name='fee_structure_list'),
     path('fee/structure/add/', views.fee_structure_add, name='fee_structure_add'),
     path('fee/structure/edit/<int:pk>/', views.fee_structure_edit, name='fee_structure_edit'),
@@ -74,7 +75,8 @@ urlpatterns = [
     path('notices/create/', views.create_notice, name='create_notice'),
     path('messages/', views.message_list, name='message_list'),
     path('messages/send/', views.send_message, name='send_message'),
-  
+    path('materials/upload/', views.course_material_upload, name='course_material_upload'),
+    path('materials/', views.course_material_list, name='course_material_list'),
     path('reports/fee/', views.fee_report, name='fee_report'),
     path('reports/top/', views.top_performers, name='top_performers'),
     path('reports/export-fee/', views.export_fee_csv, name='export_fee_csv'),
@@ -86,7 +88,6 @@ urlpatterns = [
     path('student/timetable/download/', views.student_timetable_pdf, name='student_timetable_pdf'),
     path('faculty/attendance/', views.mark_faculty_attendance, name='mark_faculty_attendance'),
     path('faculty/attendance/report/', views.faculty_attendance_report, name='faculty_attendance_report'),
-    
     path('reports/gpa/', views.gpa_report_view, name='gpa_report'),
     path('gpa-graph/', views.gpa_graph_view, name='gpa_graph'),
     path('revenue-report/', views.revenue_report_view, name='revenue_report'),
@@ -96,7 +97,6 @@ urlpatterns = [
     path('attendance/report/', views.attendance_report, name='attendance_report'),
     path("gpa-graph-page/", views.gpa_graph_view, name="gpa_graph_page"),
     path('reports/gpa-graph/', views.gpa_graph_page_view, name='gpa_graph')
-
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

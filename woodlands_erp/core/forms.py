@@ -6,13 +6,14 @@ from .models import Student, CustomUser
 from .models import Faculty
 from .models import FacultyLeave
 from .models import FacultySubjectMapping
-from .models import TimetableEntry
+from .models import TimetableEntry,StudentDocument
 from .models import Attendance, AttendanceRecord , FacultyAttendance
 from django.forms import modelformset_factory
 from .models import FeeStructure, FeePayment
 from .models import Exam, Mark
 from .models import Book, BookIssue
 from .models import Vehicle, TransportAllocation, Hostel, HostelRoom, HostelAllocation
+from .models import CourseMaterial
 from .models import Notice, Message , Department
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -23,13 +24,18 @@ from .models import CustomUser
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password1', 'password2', 'role']  
+        fields = ['username', 'email', 'password1', 'password2']  
 
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ['register_no', 'department', 'year','section', 'phone' ,'profile_pic']
 
+class StudentDocumentForm(forms.ModelForm):
+    class Meta:
+        model = StudentDocument
+        fields = ['file']
+        
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=True)
@@ -192,3 +198,7 @@ class FacultyAttendanceForm(forms.ModelForm):
         model = FacultyAttendance
         fields = ['faculty', 'status']
 
+class CourseMaterialForm(forms.ModelForm):
+    class Meta:
+        model = CourseMaterial
+        fields = ['title', 'course', 'file']
