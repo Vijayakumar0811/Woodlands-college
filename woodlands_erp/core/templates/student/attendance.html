@@ -2,12 +2,94 @@
 {% block content %}
 <div class="container mt-4">
     <h3 class="mb-4">✅ Attendance Summary</h3>
-    <div class="card">
+
+    <!-- Summary Card -->
+    <div class="card mb-4">
         <div class="card-body">
             <p><strong>Total Classes:</strong> {{ total_classes }}</p>
             <p><strong>Present Days:</strong> {{ present_days }}</p>
             <p><strong>Attendance %:</strong> {{ attendance_percent }}%</p>
         </div>
     </div>
+
+    <!-- 📊 Subject-wise Attendance Chart -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">📊 Subject-wise Attendance %</div>
+        <div class="card-body">
+            <canvas id="attendanceChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+    <div class="card-header bg-primary text-white">Attendance Records</div>
+    <div class="card-body p-0">
+        <table class="table mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Subject</th>  <!-- 👈 NEW COLUMN -->
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in attendance_records %}
+                <tr>
+                    <td>{{ record.attendance.date }}</td>
+                    <td>{{ record.attendance.subject.name }}</td>  <!-- 👈 NEW DATA -->
+                    <td>
+                        {% if record.status == "Present" %}
+                            <span class="badge bg-success">{{ record.status }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">{{ record.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted">No attendance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+<!-- ✅ Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ subject_attendance_data|json_script:"subject-data" }}
+
+<script>
+    const subjectData = JSON.parse(document.getElementById('subject-data').textContent);
+    const labels = subjectData.map(item => item.subject);
+    const values = subjectData.map(item => item.percent);
+
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Attendance %',
+                data: values,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Percentage (%)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
 {% endblock %}

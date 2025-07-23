@@ -2,29 +2,39 @@
 {% block content %}
 <div class="container mt-4">
     <h3 class="mb-4">📅 Timetable</h3>
+
     {% if timetable %}
-        <table class="table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>Day</th>
-                    <th>Subject</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Faculty</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entry in timetable %}
-                <tr>
-                    <td>{{ entry.day }}</td>
-                    <td>{{ entry.subject.name }}</td>
-                    <td>{{ entry.start_time }}</td>
-                    <td>{{ entry.end_time }}</td>
-                    <td>{{ entry.faculty.user.get_full_name }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% regroup timetable by day as day_timetables %}
+        
+        {% for day_group in day_timetables %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">{{ day_group.grouper }}</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Faculty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in day_group.list %}
+                        <tr>
+                            <td>{{ entry.subject.name }}</td>
+                            <td>{{ entry.start_time|time:"H:i" }}</td>
+                            <td>{{ entry.end_time|time:"H:i" }}</td>
+                            <td>{{ entry.faculty.user.get_full_name }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
     {% else %}
         <p>No timetable records found.</p>
     {% endif %}

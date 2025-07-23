@@ -24,7 +24,7 @@ from .models import CustomUser
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password1', 'password2']  
+        fields = ['username', 'email', 'password1', 'password2','role']  
 
 class StudentForm(forms.ModelForm):
     class Meta:
@@ -201,4 +201,4 @@ class FacultyAttendanceForm(forms.ModelForm):
 class CourseMaterialForm(forms.ModelForm):
     class Meta:
         model = CourseMaterial
-        fields = ['title', 'course', 'file']
+        fields = ['title', 'subject', 'file']

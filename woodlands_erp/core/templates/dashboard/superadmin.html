@@ -41,7 +41,7 @@
     <div id="collapseStudent" class="accordion-collapse collapse">
       <div class="accordion-body">
         <a href="{% url 'student_list' %}" class="nav-link">📋 View Students</a>
-        <a href="{% url 'student_add' %}" class="nav-link">➕ Add Student</a>
+        <a href="{% url 'create_user' %}?role=student" class="nav-link">➕ Add Student</a>
       </div>
     </div>
   </div>
@@ -56,7 +56,7 @@
     <div id="collapseFaculty" class="accordion-collapse collapse">
       <div class="accordion-body">
         <a href="{% url 'faculty_list' %}" class="nav-link">👥 View Faculty</a>
-        <a href="{% url 'faculty_add' %}" class="nav-link">➕ Add Faculty</a>
+        <a href="{% url 'create_user' %}?role=faculty" class="nav-link">➕ Add Faculty</a>
         <a href="{% url 'subject_mapping_list' %}" class="nav-link">📚 Subject Mapping</a>
       </div>
     </div>

@@ -80,19 +80,23 @@ def logout_view(request):
     return redirect('/login/')
 
 def create_user(request):
+    role_from_get = request.GET.get('role', '').lower()
+
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            role = user.role
-
-            if role == 'student':
-                return redirect('student_form', user_id=user.id)
-            elif role == 'faculty':
-                return redirect('faculty_form', user_id=user.id)
+            user = form.save(commit=False)
+            user.role = form.cleaned_data['role']
+            user.save()
+            if user.role == 'student':
+                return redirect('student_add', user_id=user.id)
+            elif user.role == 'faculty':
+                return redirect('faculty_add', user_id=user.id)
     else:
-        form = CustomUserCreationForm()
+        form = CustomUserCreationForm(initial={'role': role_from_get})
+
     return render(request, 'user/create_user.html', {'form': form})
+
 
 
 
@@ -168,10 +172,7 @@ def dashboard_student(request):
     })
 
 
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
-from .models import Student, FeeStructure, FeePayment
+
 
 @login_required
 def student_fee(request):
@@ -220,11 +221,15 @@ def student_timetable(request):
     timetable = TimetableEntry.objects.filter(
         year=student.year,
         section=student.section,
-        department=student.department).order_by('day', 'start_time')
+        department=student.department
+    ).select_related('subject', 'faculty__user').order_by('day', 'start_time')
+    weekday_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    sorted_timetable = sorted(timetable, key=lambda x: (weekday_order.index(x.day), x.start_time))
 
     return render(request, 'student/timetable.html', {
-        'timetable': timetable,
+        'timetable': sorted_timetable,
     })
+
 
 def add_fee_structure(request):
     if request.method == 'POST':
@@ -317,27 +322,23 @@ def student_list(request):
 from .models import StudentDocument
 from .forms import StudentDocumentForm
 
-def student_add(request):
+def student_add(request,user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
     if request.method == 'POST':
-        user_form = UserForm(request.POST)
+        user_form = UserForm(request.POST, instance=user) 
         student_form = StudentForm(request.POST, request.FILES)
-        files = request.FILES.getlist('documents')  # ✅
-
+        files = request.FILES.getlist('documents')  
         if user_form.is_valid() and student_form.is_valid():
             user = user_form.save(commit=False)
             user.set_password(user_form.cleaned_data['password'])
-
             student_role = Role.objects.filter(name__iexact='student').first()
             if not student_role:
                 return HttpResponse("❌ 'student' role not found in DB.", status=500)
-            user.role = student_role
+            user.role = 'student'
             user.save()
-
             student = student_form.save(commit=False)
             student.user = user
             student.save()
-
-            # ✅ Save multiple documents
             for f in files:
                 StudentDocument.objects.create(student=student, file=f)
 
@@ -397,24 +398,32 @@ def faculty_list(request):
     faculty = Faculty.objects.all()
     return render(request, 'faculty/faculty_list.html', {'faculty': faculty})
 
-@login_required
-def faculty_add(request):
+def faculty_add(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+
     if request.method == 'POST':
-        user_form = UserForm(request.POST)
-        faculty_form = FacultyForm(request.POST, request.FILES)
+        user_form = UserForm(request.POST, instance=user)
+        faculty_form = FacultyForm(request.POST)
+
         if user_form.is_valid() and faculty_form.is_valid():
             user = user_form.save(commit=False)
-            user.role = 'faculty'
             user.set_password(user_form.cleaned_data['password'])
+            user.role = 'faculty'  # ✅ Just assign string
             user.save()
+
             faculty = faculty_form.save(commit=False)
             faculty.user = user
             faculty.save()
+
             return redirect('faculty_list')
     else:
-        user_form = UserForm()
+        user_form = UserForm(instance=user)
         faculty_form = FacultyForm()
-    return render(request, 'faculty/faculty_form.html', {'user_form': user_form, 'faculty_form': faculty_form})
+
+    return render(request, 'faculty/faculty_form.html', {
+        'user_form': user_form,
+        'faculty_form': faculty_form
+    })
 
 @login_required
 def faculty_edit(request, pk):
@@ -644,8 +653,18 @@ def generate_fee_receipt_pdf(request, payment_id):
 
 @login_required
 def exam_list(request):
-    exams = Exam.objects.all().order_by('-date')
+    user = request.user
+    if hasattr(user, 'faculty'):
+        subject_ids = FacultySubjectMapping.objects.filter(
+            faculty=user.faculty
+        ).values_list('subject_id', flat=True)
+
+        exams = Exam.objects.filter(subject__id__in=subject_ids).order_by('-date')
+    else:
+        exams = Exam.objects.all().order_by('-date')
+
     return render(request, 'exam/exam_list.html', {'exams': exams})
+
 
 @login_required
 def exam_add(request):
@@ -660,8 +679,20 @@ def exam_add(request):
 @login_required
 def mark_entry(request, exam_id):
     exam = get_object_or_404(Exam, id=exam_id)
-    students = Student.objects.filter(year=exam.year)
-    subjects = Subject.objects.filter(course=exam.subject.course)
+
+    students = Student.objects.filter(year=exam.year, section=exam.section)
+
+    # ✅ Filter only subjects handled by logged-in faculty for this exam's year & section
+    if hasattr(request.user, 'faculty'):
+        subjects = Subject.objects.filter(
+            id__in=FacultySubjectMapping.objects.filter(
+                faculty=request.user.faculty,
+                subject__year=exam.year,
+                subject__section=exam.section
+            ).values_list('subject_id', flat=True)
+        )
+    else:
+        subjects = Subject.objects.none()
 
     if request.method == 'POST':
         for student in students:
@@ -684,7 +715,9 @@ def mark_entry(request, exam_id):
         return redirect('exam_list')
 
     return render(request, 'exam/mark_entry.html', {
-        'exam': exam, 'students': students, 'subjects': subjects
+        'exam': exam,
+        'students': students,
+        'subjects': subjects,
     })
 
 @login_required
@@ -1077,32 +1110,7 @@ def student_timetable_pdf(request):
     return response
 
 
-@login_required
-def mark_faculty_attendance(request):
-    if request.user.role.lower() not in ['superadmin', 'hod']:
-        return HttpResponseForbidden("Only SuperAdmin or HOD can mark attendance.")
 
-    if request.method == 'POST':
-        form = FacultyAttendanceForm(request.POST)
-        if form.is_valid():
-            attendance = form.save(commit=False)
-            attendance.marked_by = request.user
-            attendance.save()
-            return redirect('faculty_attendance_report')
-    else:
-        form = FacultyAttendanceForm()
-
-    return render(request, 'attendance/mark_faculty_attendance.html', {'form': form})
-
-@login_required
-def faculty_attendance_report(request):
-    attendance_data = FacultyAttendance.objects.all().order_by('-date')
-    return render(request, 'attendance/faculty_attendance_report.html', {'attendance_data': attendance_data})
-
-
-
-from django.shortcuts import render
-from .models import Mark
 
 
 
@@ -1206,14 +1214,42 @@ def attendance_report(request):
 
     return render(request, 'attendance/attendance_report.html', {'report': report})
 
+
 @login_required
 def student_attendance_view(request):
-    student = Student.objects.get(user=request.user)
-    attendance_records = AttendanceRecord.objects.filter(student=student).select_related('attendance').order_by('-attendance__date')
+    student = get_object_or_404(Student, user=request.user)
+    selected_subject_id = request.GET.get('subject')
 
-    return render(request, 'student/attendance.html', {
-        'attendance_records': attendance_records
-    })
+    attendance_records = AttendanceRecord.objects.filter(student=student).select_related('attendance', 'attendance__subject')
+
+    if selected_subject_id:
+        attendance_records = attendance_records.filter(attendance__subject__id=selected_subject_id)
+
+    total_classes = attendance_records.count()
+    present_days = attendance_records.filter(status='Present').count()
+    attendance_percent = round((present_days / total_classes) * 100, 2) if total_classes > 0 else 0
+
+    # 📊 Subject-wise attendance %
+    subjects = Subject.objects.all()
+    subject_attendance_data = []
+    for subject in subjects:
+        subject_records = AttendanceRecord.objects.filter(student=student, attendance__subject=subject)
+        total = subject_records.count()
+        present = subject_records.filter(status='Present').count()
+        percent = round((present / total) * 100, 2) if total > 0 else 0
+        subject_attendance_data.append({'subject': subject.name, 'percent': percent})
+
+    context = {
+        'attendance_records': attendance_records,
+        'total_classes': total_classes,
+        'present_days': present_days,
+        'attendance_percent': attendance_percent,
+        'subjects': subjects,
+        'selected_subject_id': selected_subject_id,
+        'subject_attendance_data': subject_attendance_data,
+    }
+    return render(request, 'student/attendance.html', context)
+
 
 def gpa_graph_page_view(request):
     return render(request, "reports/gpa_graph.html")
@@ -1341,13 +1377,16 @@ def course_material_upload(request):
         'subjects': subjects
     })
 
+
+
 @login_required
 def student_view_course_materials(request):
     if not hasattr(request.user, 'student'):
         return HttpResponseForbidden("Only students can access this page.")
+
     student = request.user.student
+
     materials = CourseMaterial.objects.filter(
-        subject=student.course,
         subject__year=student.year,
     ).select_related('subject', 'uploaded_by').order_by('-uploaded_at')
 

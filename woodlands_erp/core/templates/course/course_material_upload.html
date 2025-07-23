@@ -11,23 +11,32 @@
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="subject" class="form-label">Subject:</label>
-                    <select name="subject" class="form-select">
-                        {% for subject in subjects %}
-                            <option value="{{ subject.id }}">{{ subject.name }}</option>
+
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
                         {% endfor %}
-                    </select>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    {{ form.subject.label_tag }}
+                    {{ form.subject }}
                 </div>
 
                 <div class="mb-3">
-                    <label for="title" class="form-label">Title:</label>
-                    <input type="text" name="title" class="form-control" required>
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
                 </div>
 
                 <div class="mb-3">
-                    <label for="file" class="form-label">File Upload:</label>
-                    <input type="file" name="file" class="form-control" required>
+                    {{ form.file.label_tag }}
+                    {{ form.file }}
                 </div>
 
                 <button type="submit" class="btn btn-success">Upload</button>

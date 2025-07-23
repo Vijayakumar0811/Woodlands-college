@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container mt-4">
     <h3 class="mb-4">👩‍🏫 Faculty List</h3>
-    <a href="{% url 'faculty_add' %}" class="btn btn-success mb-3">➕ Add Faculty</a>
+    <a href="{% url 'create_user' %}?role=faculty" class="btn btn-success mb-3">➕ Add Faculty</a>
 
     {% if faculty %}
     <div class="table-responsive">

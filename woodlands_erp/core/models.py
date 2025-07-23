@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class CustomUser(AbstractUser):
@@ -20,8 +21,7 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=30, choices=ROLE_CHOICES)
     def __str__(self):
         return self.username
-from django.conf import settings
-from django.db import models
+
 
 class Section(models.Model):
     name = models.CharField(max_length=10)
@@ -52,6 +52,7 @@ class Subject(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=10)
     year = models.IntegerField()
+    section = models.CharField(max_length=1)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     student = models.ManyToManyField('Student')
 
@@ -61,7 +62,6 @@ class Subject(models.Model):
 
 
 
-from django.contrib.auth.models import User
 
 
 
@@ -437,8 +437,6 @@ class Revenue(models.Model):
 class CourseMaterial(models.Model):
     title = models.CharField(max_length=200)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    year = models.IntegerField()
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     file = models.FileField(upload_to='course_materials/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
