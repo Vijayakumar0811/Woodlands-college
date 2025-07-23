@@ -61,11 +61,6 @@ class Subject(models.Model):
         return f"{self.code} - {self.name}"  
 
 
-
-
-
-
-
 def student_photo_path(instance, filename):
     return f"student_photos/{filename}"
 
@@ -232,7 +227,7 @@ class BookIssue(models.Model):
     def fine_amount(self):
         if self.is_late():
             delta = (self.returned_on - self.return_date).days
-            return delta * 10  # ₹10/day fine
+            return delta * 10  
         return 0
 
 class Vehicle(models.Model):
@@ -289,16 +284,6 @@ class HostelAllocation(models.Model):
         return f"{self.student.user.get_full_name()} - Room {self.room.room_number}"
 
 
-class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
-    subject = models.CharField(max_length=200)
-    body = models.TextField()
-    sent_on = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.subject} - {self.sender.username} to {self.receiver.username}"
-
 class Fee(models.Model):
     STATUS_CHOICES = [
         ('Paid', 'Paid'),
@@ -320,8 +305,7 @@ class Result(models.Model):
     marks = models.FloatField()
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
 
-from django.conf import settings
-from django.db import models
+
 
 class Notice(models.Model):
     title = models.CharField(max_length=100)
@@ -410,7 +394,7 @@ def save(self, *args, **kwargs):
     super().save(*args, **kwargs)
 
 def calculate_grade_point(self):
-    # Example logic: you can customize this
+
     if self.marks >= 90:
         return 10
     elif self.marks >= 80:

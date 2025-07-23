@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import (
-    Student, Faculty, Attendance, Subject, Exam, Book, Hostel, Notice, Message,
+    Student, Faculty, Attendance, Subject, Exam, Book, Hostel, Notice, 
     FeeStructure, FeePayment, TimetableEntry, Vehicle, TransportAllocation,
     HostelRoom, HostelAllocation, FacultyLeave, FacultySubjectMapping,
     Course, CustomUser, Department , Parent , Librarian
@@ -102,11 +102,10 @@ class MarkAdmin(admin.ModelAdmin):
         return obj.get_weighted_score()
     get_weighted_score_display.short_description = "Weighted Score"
 
-# Register remaining models normally
+
 admin.site.register(Attendance)
 admin.site.register(Book)
 admin.site.register(Notice)
-admin.site.register(Message)
 admin.site.register(FeeStructure)
 admin.site.register(FeePayment)
 admin.site.register(Vehicle)
@@ -115,6 +114,5 @@ admin.site.register(HostelRoom)
 admin.site.register(HostelAllocation)
 admin.site.register(FacultyLeave)
 admin.site.register(FacultySubjectMapping)
-
 admin.site.register(Parent)
 admin.site.register(Librarian)

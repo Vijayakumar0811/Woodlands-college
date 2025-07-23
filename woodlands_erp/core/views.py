@@ -12,7 +12,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Student, CustomUser , Faculty , Subject ,Parent ,HostelIncharge , Hostel , CourseMaterial
 from .forms import StudentForm, UserForm , FacultyForm , FacultyLeave , FacultyLeaveForm , FacultySubjectMappingForm ,TimetableEntryForm , FacultySubjectMapping , TimetableEntry ,FacultyAttendanceForm
 from .forms import Attendance, AttendanceForm , AttendanceRecord , AttendanceRecordForm ,FeePayment , FeePaymentForm , FeeStructure , FeeStructureForm ,AttendanceRecordFormSet  ,FacultyAttendance
-from .forms import Mark , MarkForm , Exam , ExamForm , Book , BookForm , BookIssue , BookIssueForm , Message , MessageForm , Notice , NoticeForm ,CourseMaterialForm
+from .forms import Mark , MarkForm , Exam , ExamForm , Book , BookForm , BookIssue , BookIssueForm ,  Notice , NoticeForm ,CourseMaterialForm
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum
 from .models import FeeStructure, FeePayment, Student
@@ -96,9 +96,6 @@ def create_user(request):
         form = CustomUserCreationForm(initial={'role': role_from_get})
 
     return render(request, 'user/create_user.html', {'form': form})
-
-
-
 
 
 @login_required
@@ -257,7 +254,6 @@ def dashboard_parent(request):
         parent = Parent.objects.get(user=request.user)
         child = Student.objects.get(parent=parent)
 
-        # Attendance calculation based on 'Present' / 'Absent' status
         records = AttendanceRecord.objects.filter(student=child)
         present_days = records.filter(status="Present").count()
         total_days = records.count()
@@ -268,7 +264,7 @@ def dashboard_parent(request):
             "percentage": round((present_days / total_days) * 100, 2) if total_days > 0 else 0
         }
 
-        # Fetch marks
+
         marks = Mark.objects.filter(student=child)
 
         return render(request, 'dashboard/parent.html', {
@@ -380,11 +376,11 @@ def student_delete(request , pk):
 @login_required
 def promote_student(request, pk):
     student = get_object_or_404(Student, pk=pk)
-    if student.year < 4:  # Assuming 4 years total
+    if student.year < 4:  
         student.year += 1
     else:
-        student.section = chr(ord(student.section) + 1)  # A → B → C
-        student.year = 1  # Reset year
+        student.section = chr(ord(student.section) + 1)  
+        student.year = 1  
     student.save()
     return redirect('student_list')
 
@@ -408,7 +404,7 @@ def faculty_add(request, user_id):
         if user_form.is_valid() and faculty_form.is_valid():
             user = user_form.save(commit=False)
             user.set_password(user_form.cleaned_data['password'])
-            user.role = 'faculty'  # ✅ Just assign string
+            user.role = 'faculty'  
             user.save()
 
             faculty = faculty_form.save(commit=False)
@@ -454,7 +450,7 @@ def faculty_leave_apply(request):
         form = FacultyLeaveForm(request.POST)
         if form.is_valid():
             leave = form.save(commit=False)
-            leave.faculty = Faculty.objects.get(user=request.user)  # ✅ important link
+            leave.faculty = Faculty.objects.get(user=request.user)  
             leave.save()
             messages.success(request, "Leave request submitted.")
             return redirect('dashboard_faculty')
@@ -614,11 +610,9 @@ def generate_fee_receipt_pdf(request, payment_id):
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(name='Title', parent=styles['Title'], alignment=TA_CENTER, fontSize=18, spaceAfter=20)
 
-    # Title
     elements.append(Paragraph("Fee Payment Receipt", title_style))
     elements.append(Spacer(1, 12))
 
-    # Receipt Info Table
     data = [
         ['Student Name:', payment.student.user.get_full_name()],
         ['Student ID:', payment.student.user.username],
@@ -643,7 +637,6 @@ def generate_fee_receipt_pdf(request, payment_id):
     elements.append(table)
     elements.append(Spacer(1, 40))
 
-    # Footer
     footer = Paragraph("This is a system-generated receipt. No signature required.", styles['Normal'])
     elements.append(footer)
 
@@ -679,10 +672,7 @@ def exam_add(request):
 @login_required
 def mark_entry(request, exam_id):
     exam = get_object_or_404(Exam, id=exam_id)
-
     students = Student.objects.filter(year=exam.year, section=exam.section)
-
-    # ✅ Filter only subjects handled by logged-in faculty for this exam's year & section
     if hasattr(request.user, 'faculty'):
         subjects = Subject.objects.filter(
             id__in=FacultySubjectMapping.objects.filter(
@@ -849,20 +839,6 @@ def create_notice(request):
         return redirect('notice_list')
     return render(request, 'notice_form.html', {'form': form})
 
-@login_required
-def message_list(request):
-    messages = Message.objects.filter(receiver=request.user)
-    return render(request, '/message_list.html', {'messages': messages})
-
-@login_required
-def send_message(request):
-    form = MessageForm(request.POST or None)
-    if form.is_valid():
-        msg = form.save(commit=False)
-        msg.sender = request.user
-        msg.save()
-        return redirect('message_list')
-    return render(request, 'messaging/message_form.html', {'form': form})
 
 from collections import defaultdict
 
@@ -967,7 +943,7 @@ def allocation_list(request):
     allocations = TransportAllocation.objects.select_related('student__user', 'vehicle')
     return render(request, 'transport/allocation.html', {'allocations': allocations})
 
-# Add a new allocation
+
 def allocation_add(request):
     if request.method == 'POST':
         form = TransportAllocationForm(request.POST)
@@ -979,7 +955,7 @@ def allocation_add(request):
         form = TransportAllocationForm()
     return render(request, 'transport/allocation_form.html', {'form': form, 'title': 'Add Transport Allocation'})
 
-# Edit existing allocation
+
 def allocation_edit(request, pk):
     allocation = get_object_or_404(TransportAllocation, pk=pk)
     if request.method == 'POST':
@@ -992,14 +968,14 @@ def allocation_edit(request, pk):
         form = TransportAllocationForm(instance=allocation)
     return render(request, 'transport/allocation_form.html', {'form': form, 'title': 'Edit Transport Allocation'})
 
-# Delete an allocation
+
 def allocation_delete(request, pk):
     allocation = get_object_or_404(TransportAllocation, pk=pk)
     allocation.delete()
     messages.warning(request, "Transport allocation deleted.")
     return redirect('transport_allocation_list')
 
-# Toggle paid status
+
 def allocation_toggle_paid(request, pk):
     allocation = get_object_or_404(TransportAllocation, pk=pk)
     allocation.paid = not allocation.paid
@@ -1015,7 +991,7 @@ def timetable_print(request):
     elements = []
     styles = getSampleStyleSheet()
 
-    # Title
+
     title = Paragraph("Full Class Timetable", styles['Title'])
     elements.append(title)
     elements.append(Spacer(1, 20))
@@ -1070,7 +1046,7 @@ def student_timetable_pdf(request):
     elements = []
     styles = getSampleStyleSheet()
 
-    # Title
+
     title = Paragraph(f" Timetable for {student.user.get_full_name()}", styles['Title'])
     elements.append(title)
     elements.append(Spacer(1, 20))
@@ -1111,32 +1087,23 @@ def student_timetable_pdf(request):
 
 
 
-
-
-
-from .models import FeePayment
-
 def fee_report(request):
-    # Create the HttpResponse object with PDF headers.
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="fee_report.pdf"'
 
-    # Create the PDF object using ReportLab
+
     p = canvas.Canvas(response, pagesize=A4)
     width, height = A4
 
-    # Title
     p.setFont("Helvetica-Bold", 16)
     p.drawString(100, height - 50, "Fee Payment Report")
 
-    # Header
     y = height - 100
     p.setFont("Helvetica-Bold", 12)
     p.drawString(50, y, "Student")
     p.drawString(200, y, "Amount Paid")
     p.drawString(350, y, "Date")
 
-    # Body
     y -= 25
     p.setFont("Helvetica", 10)
     for payment in FeePayment.objects.all():
@@ -1151,8 +1118,6 @@ def fee_report(request):
     p.showPage()
     p.save()
     return response
-
-
 
 
 @login_required
@@ -1229,7 +1194,7 @@ def student_attendance_view(request):
     present_days = attendance_records.filter(status='Present').count()
     attendance_percent = round((present_days / total_classes) * 100, 2) if total_classes > 0 else 0
 
-    # 📊 Subject-wise attendance %
+
     subjects = Subject.objects.all()
     subject_attendance_data = []
     for subject in subjects:
@@ -1260,7 +1225,6 @@ def gpa_report_view(request):
     gpa = 0
     percentage = 0
 
-    # Show only students who have marks
     students = Student.objects.filter().distinct()
 
     if student_id:
@@ -1393,3 +1357,6 @@ def student_view_course_materials(request):
     return render(request, 'course/course_material_list.html', {
         'materials': materials,
     })
+
+def project_overview(request):
+    return render(request, 'Project Overview.html')

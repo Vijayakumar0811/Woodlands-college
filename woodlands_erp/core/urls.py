@@ -74,8 +74,6 @@ urlpatterns = [
     path('hostel/allocate/', views.allocate_hostel, name='allocate_hostel'),
     path('notices/', views.notice_list, name='notice_list'),
     path('notices/create/', views.create_notice, name='create_notice'),
-    path('messages/', views.message_list, name='message_list'),
-    path('messages/send/', views.send_message, name='send_message'),
     path('materials/upload/', views.course_material_upload, name='course_material_upload'),
     path('materials/', views.course_material_list, name='course_material_list'),
     path('reports/fee/', views.fee_report, name='fee_report'),
@@ -95,7 +93,7 @@ urlpatterns = [
     path('api/students/', views.get_students_by_class, name='get_students_by_class'),
     path('attendance/report/', views.attendance_report, name='attendance_report'),
     path("gpa-graph-page/", views.gpa_graph_view, name="gpa_graph_page"),
-    path('reports/gpa-graph/', views.gpa_graph_page_view, name='gpa_graph')
-
+    path('reports/gpa-graph/', views.gpa_graph_page_view, name='gpa_graph'),
+    path('about/', views.project_overview, name='project_overview'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

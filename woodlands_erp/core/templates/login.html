@@ -78,7 +78,7 @@
     <form method="POST" action="{% url 'login' %}">
       {% csrf_token %}
       {{ form.non_field_errors }}
-      <label>username:</label>
+      <label>Username:</label>
       <input type="text" name="username" placeholder="Enter username" required>
 
       <label>Password:</label>
@@ -98,5 +98,10 @@
       </div>
     </form>
   </div>
+  <footer style="background: #11375B; color: white; text-align: center; padding: 15px; position: relative; bottom: 0; width: 100%;">
+    <p>
+      <a href="{% url 'project_overview' %}" style="color: #FFD700; text-decoration: none;">About Us</a>
+    </p>
+  </footer>
 </body>
 </html>

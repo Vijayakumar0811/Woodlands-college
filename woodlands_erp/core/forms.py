@@ -14,7 +14,7 @@ from .models import Exam, Mark
 from .models import Book, BookIssue
 from .models import Vehicle, TransportAllocation, Hostel, HostelRoom, HostelAllocation
 from .models import CourseMaterial
-from .models import Notice, Message , Department
+from .models import Notice, Department
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from django import forms
@@ -79,7 +79,6 @@ class TimetableEntryForm(forms.ModelForm):
         if not all([faculty, room, day, start_time, end_time]):
             return
 
-        # Conflict with same faculty
         faculty_conflict = TimetableEntry.objects.filter(
             faculty=faculty,
             day=day,
@@ -93,7 +92,7 @@ class TimetableEntryForm(forms.ModelForm):
         if faculty_conflict.exists():
             raise forms.ValidationError("⚠️ Faculty is already assigned at this time.")
 
-        # Conflict with same room
+
         room_conflict = TimetableEntry.objects.filter(
             room=room,
             day=day,
@@ -188,10 +187,6 @@ class NoticeForm(forms.ModelForm):
         model = Notice
         fields = ['title', 'content', 'target_roles']
 
-class MessageForm(forms.ModelForm):
-    class Meta:
-        model = Message
-        fields = ['receiver', 'subject', 'body']
 
 class FacultyAttendanceForm(forms.ModelForm):
     class Meta:
